@@ -3,9 +3,19 @@ import os
 import math
 import argparse
 
+def CalculateErrorRatio (num, numErr, den, denErr):
+    if num and den:
+        relativeErrorNum   = numErr/num
+        relativeErrorDen   = denErr/den
+        relativeErrorRatio = TMath.Sqrt(relativeErrorNum*relativeErrorNum + relativeErrorDen*relativeErrorDen)
+        ratio = num/den
+        totErrorRatio = relativeErrorRatio*ratio
+    else :
+        totErrorRatio = 10000.
+    return totErrorRatio
 
 pionMCNoFilter_FileName = '/Volumes/Seagate/Elena/MCContamination/TrueAnaPions60A_NoFilter.root'
-pionMC_FileName = '/Volumes/Seagate/Elena/MCContamination/XSHisto.root'
+pionMC_FileName = '/Volumes/Seagate/Elena/MCContamination/MC_XS60AHisto.root'
 
 
 # Get Interacting and Incident plots Reco
@@ -14,7 +24,6 @@ intTrue  = pionMC_File.Get("TrueXS/hInteractingKE")
 incTrue  = pionMC_File.Get("TrueXS/hIncidentKE")
 intReco  = pionMC_File.Get("RecoXS/hRecoInteractingKE")
 incReco  = pionMC_File.Get("RecoXS/hRecoIncidentKE")
-
 
 
 # Get Interacting and Incident plots for all true primary in TPC
@@ -92,56 +101,91 @@ legend.Draw("same")
 c60T3.Update()
 
 
+        
+effCorr_Int_NotFilt = intTrueNoFilter.Clone("effCorr_Int_NoFilt")
+effCorr_Inc_NotFilt = incTrueNoFilter.Clone("effCorr_Inc_NoFilt")
+effCorr_Int         = intTrue.Clone("effCorr_Int")
+effCorr_Inc         = incTrue.Clone("effCorr_Inc")
+
+effCorr_Int_NotFilt .Sumw2() 
+effCorr_Inc_NotFilt .Sumw2() 
+effCorr_Int         .Sumw2() 
+effCorr_Inc         .Sumw2()
+
+effCorr_Int_NotFilt .Divide(intReco) 
+effCorr_Inc_NotFilt .Divide(incReco) 
+effCorr_Int         .Divide(intReco) 
+effCorr_Inc         .Divide(incReco) 
+
+
 '''
-# TPC Reco Efficiencies
-c60 = TCanvas("c60" ,"TPC Reco Efficiency" ,200 ,10 ,1200 ,800)
-c60.Divide(2,1) 
-p3 = c60.cd(1)
-p3.SetGrid()
-intEff = intReco.Clone("intEff")
-intEff.Divide(intTrue)
-intEff.Sumw2()
-intEff.Draw("")
+for i in xrange(intTrueNoFilter.GetSize()):
+    trueBin_Int    = intTrueNoFilter.GetBinContent(i)
+    trueBin_IntErr = intTrueNoFilter.GetBinError(i)
+    trueBin_Inc    = incTrueNoFilter.GetBinContent(i)
+    trueBin_IncErr = incTrueNoFilter.GetBinError(i)
 
-p4 = c60.cd(2)
-p4.SetGrid()
-incEff = incReco.Clone("incEff")
-incEff.Divide(incTrue)
-incEff.Sumw2()
-incEff.Draw("")
-c60.Update()
+    recoBin_Int    = intReco.GetBinContent(i)
+    recoBin_IntErr = intReco.GetBinError(i)
+    recoBin_Inc    = incReco.GetBinContent(i)
+    recoBin_IncErr = incReco.GetBinError(i)
+
+    if recoBin_Int: 
+        print i,trueBin_Int/recoBin_Int, effCorr_Int_NotFilt.GetBinContent(i), CalculateErrorRatio(trueBin_Int, trueBin_IntErr,  recoBin_Int, recoBin_IntErr), effCorr_Int_NotFilt.GetBinError(i)
 
 
-# WC2TPC Match Efficiencies
-cNoF = TCanvas("cNoF" ,"TPC Reco Efficiency" ,200 ,10 ,1200 ,800)
-cNoF.Divide(2,2) 
-pNoF1 = cNoF.cd(1)
-pNoF1.SetGrid()
-intTrueNoFilter.Draw("histo")
-intReco.Draw("histosames")
-legend.Draw("same")
 
-pNoF2 = cNoF.cd(2)
-pNoF2.SetGrid()
-incTrueNoFilter.Draw("histo")
-incReco.Draw("histosames")
-legend.Draw("same")
-
-pNoF3 = cNoF.cd(3)
-pNoF3.SetGrid()
-intEffNoFilter = intReco.Clone("intEffNoF")
-intEffNoFilter.Divide(incTrueNoFilter)
-intEffNoFilter.Sumw2()
-intEffNoFilter.Draw("")
-
-pNoF4 = cNoF.cd(4)
-pNoF4.SetGrid()
-incEffNoFilter = incReco.Clone("incEffNoF")
-incEffNoFilter.Divide(incTrue)
-incEffNoFilter.Sumw2()
-incEffNoFilter.Draw("")
-cNoF.Update()
+    if recoBin_Int*trueBin_Int :
+        relErrorInt_reco = recoBin_IntErr/float(recoBin_Int)
+        relErrorInt_true = trueBin_IntErr/float(trueBin_Int)
+        totErrorInt = TMath.Sqrt(relErrorInt_reco*relErrorInt_reco + relErrorInt_true*relErrorInt_true)
+        Int_Correction = trueBin_Int/recoBin_Int
+        totErrorInt = totErrorInt*Int_Correction
+        ##
+        relErrorInc_reco = recoBin_IncErr/float(recoBin_Inc)
+        relErrorInc_true = trueBin_IncErr/float(trueBin_Inc)
+        totErrorInc = TMath.Sqrt(relErrorInc_reco*relErrorInc_reco + relErrorInc_true*relErrorInc_true)
+        Inc_Correction = trueBin_Inc/recoBin_Inc
+        totErrorInc = totErrorInc*Inc_Correction
+        #print i, "interacting: ", Int_Correction ," +/-" ,totErrorInt , "incident: ", Inc_Correction," +/-" ,totErrorInc
 '''
+
+
+cTest = TCanvas("cTest" ,"Cross Section" ,200 ,10 ,700 ,700)
+cTest.cd()
+cTest.SetGrid()
+corrReco_Int         = intReco.Clone("corrReco_Int")
+corrReco_Inc         = incReco.Clone("corrReco_Inc")
+corrReco_Int.Sumw2()
+corrReco_Inc.Sumw2()
+corrReco_Int.Multiply(effCorr_Int_NotFilt)
+corrReco_Inc.Multiply(effCorr_Inc_NotFilt)
+XSRecoCorrected = corrReco_Int.Clone("XSCorrected")
+XSRecoCorrected.Divide(corrReco_Inc)
+XSRecoCorrected.Scale(101.10968)
+
+XSTrueNoFilter.Draw("pe")
+XSRecoCorrected.Draw("pesame")
+cTest.Update()
+
+
+ 
+outFile = TFile("EfficiencyCorrectionPions60A.root","recreate")
+outFile.cd()
+
+intTrueNoFilter.Write("interactingTrueMC_NoFilt",TObject.kWriteDelete)
+incTrueNoFilter.Write("incidentTrueMC_NoFilt",TObject.kWriteDelete)
+intTrue.Write("interactingTrueMC",TObject.kWriteDelete)
+incTrue.Write("incidentTrueMC",TObject.kWriteDelete)
+intReco.Write("interactingRecoMC",TObject.kWriteDelete)
+incReco.Write("incidentRecoMC",TObject.kWriteDelete)
+effCorr_Int_NotFilt .Write() 
+effCorr_Inc_NotFilt .Write() 
+effCorr_Int         .Write() 
+effCorr_Inc         .Write()
+
+outFile.Write()
+outFile.Close()
 
 raw_input()  
 

@@ -5,7 +5,11 @@ import argparse
 
 
 
-#pionData_FileName = '/Volumes/Seagate/Elena/DataTPC/temp60A.root'
+efficiencyCorrection_FileName = 'EfficiencyCorrectionPions60A.root'
+efficiencyCorrection_File = TFile.Open(efficiencyCorrection_FileName)
+efficiencyCorrection_Int  = efficiencyCorrection_File.Get("effCorr_Int_NoFilt")
+efficiencyCorrection_Inc  = efficiencyCorrection_File.Get("effCorr_Inc_NoFilt")
+
 
 pionData_FileName = '/Volumes/Seagate/Elena/DataTPC/temp60A.root'
 
@@ -65,13 +69,10 @@ backgroundCorrection_Int = recoData_Int.Clone("backgroundCorrection_Int")
 backgroundCorrection_Inc = recoData_Inc.Clone("backgroundCorrection_Inc")
 for i in xrange(backgroundCorrection_Int.GetSize()):
     backgroundCorrection_Int.SetBinContent(i, 1)
-    backgroundCorrection_Int.SetBinError(i, 0.01)
-    if i < 6 :
-        backgroundCorrection_Inc.SetBinContent(i, 2)
-        backgroundCorrection_Inc.SetBinError(i, 0.01)
-    else:
-        backgroundCorrection_Inc.SetBinContent(i, 0.5)
-        backgroundCorrection_Inc.SetBinError(i, 0.01)
+    backgroundCorrection_Int.SetBinError(i, 0.001)
+    backgroundCorrection_Inc.SetBinContent(i, 1)
+    backgroundCorrection_Inc.SetBinError(i, 0.001)
+    
 # This is the End of the Place Holder
 
 # Background Subtracted Interacting Plot
@@ -109,6 +110,7 @@ cBkgSub.Update()
 ##############    Efficiency Correction Data       ###################
 ######################################################################
 # Get Interacting and Incident plots Reco
+'''
 efficiencyCorrection_Int = recoData_Int.Clone("efficiencyCorrection_Int")
 efficiencyCorrection_Inc = recoData_Inc.Clone("efficiencyCorrection_Inc")
 for i in xrange(efficiencyCorrection_Int.GetSize()):
@@ -120,7 +122,7 @@ for i in xrange(efficiencyCorrection_Int.GetSize()):
     else:
         efficiencyCorrection_Inc.SetBinContent(i, 0.5)
         efficiencyCorrection_Inc.SetBinError(i, 0.01)
-
+'''
 
 
 # Efficiency Corrected Interacting Plot
@@ -162,19 +164,19 @@ cSummary.Divide(3,1)
 p1 = cSummary.cd(1)
 p1.SetGrid()
 recoData_Int.Draw("pe")
-bkgSubData_Int.Draw("pesame")
+#bkgSubData_Int.Draw("pesame")
 effCorrData_Int.Draw("pesame")
 
 p2 = cSummary.cd(2)
 p2.SetGrid()
 recoData_Inc.Draw("pe")
-bkgSubData_Inc.Draw("pesame")
+#bkgSubData_Inc.Draw("pesame")
 effCorrData_Inc.Draw("pesame")
 
 p3 = cSummary.cd(3)
 p3.SetGrid()
 rawXS.Draw("pe")
-bkgSubXS.Draw("pesame")
+#bkgSubXS.Draw("pesame")
 effCorrXS.Draw("pesame")
 cSummary.Update()
 
