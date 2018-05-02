@@ -44,8 +44,8 @@ basis.SetFillColor(0);
 legend.AddEntry(basis,"Estimated Composition");
 legend.AddEntry(muonHalf,"Muons x 2");
 legend.AddEntry(muonTwice,"Muons x 0.5");
-legend.AddEntry(elecHalf,"Electrons x 2");
-legend.AddEntry(elecTwice,"Electrons x 0.5");
+legend.AddEntry(elecTwice,"Electrons x 2");
+legend.AddEntry(elecHalf,"Electrons x 0.5");
 
 
               

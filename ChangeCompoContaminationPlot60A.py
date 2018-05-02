@@ -10,7 +10,7 @@ import argparse
 muonInBeam60A = 0.046  #  4.6% muons 9.2
 elecInBeam60A = 0.264  # 26.4% electrons
 
-changeMuon = 1.
+changeMuon = 0.
 changeElectron = 1.
 muonInBeam60A = changeMuon*muonInBeam60A
 elecInBeam60A = changeElectron*elecInBeam60A
