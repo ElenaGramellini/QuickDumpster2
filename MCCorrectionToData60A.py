@@ -5,13 +5,19 @@ import argparse
 
 
 
+
+backgroundCorrection_FileName = 'BackGroundCorrectionPions60A.root'
+backgroundCorrection_File = TFile.Open(backgroundCorrection_FileName)
+backgroundCorrection_Int  = backgroundCorrection_File.Get("backgroundCorrection_Int")
+backgroundCorrection_Inc  = backgroundCorrection_File.Get("backgroundCorrection_Inc")
+
 efficiencyCorrection_FileName = 'EfficiencyCorrectionPions60A.root'
 efficiencyCorrection_File = TFile.Open(efficiencyCorrection_FileName)
 efficiencyCorrection_Int  = efficiencyCorrection_File.Get("effCorr_Int_NoFilt")
 efficiencyCorrection_Inc  = efficiencyCorrection_File.Get("effCorr_Inc_NoFilt")
 
 
-pionData_FileName = '/Volumes/Seagate/Elena/DataTPC/temp60A.root'
+pionData_FileName = '/Volumes/Seagate/Elena/TPC/Data60A.root'
 
 
 ###################################################################
@@ -63,18 +69,6 @@ cRaw.Update()
 ######################################################################
 ####################       BkgSub Data       #########################
 ######################################################################
-# Get Background Subtraction Corrections From MC
-# This is a Place Holder
-backgroundCorrection_Int = recoData_Int.Clone("backgroundCorrection_Int")
-backgroundCorrection_Inc = recoData_Inc.Clone("backgroundCorrection_Inc")
-for i in xrange(backgroundCorrection_Int.GetSize()):
-    backgroundCorrection_Int.SetBinContent(i, 1)
-    backgroundCorrection_Int.SetBinError(i, 0.001)
-    backgroundCorrection_Inc.SetBinContent(i, 1)
-    backgroundCorrection_Inc.SetBinError(i, 0.001)
-    
-# This is the End of the Place Holder
-
 # Background Subtracted Interacting Plot
 cBkgSub = TCanvas("cBkgSub" ,"Background Subtracted Interacting and Incindent" ,0 ,0 ,1800 ,600)
 cBkgSub.Divide(3,1)

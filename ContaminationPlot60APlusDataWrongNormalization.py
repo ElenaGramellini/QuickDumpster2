@@ -4,6 +4,11 @@ import math
 import argparse
 
 
+## Final Plots I want out:
+# backgroundCorrection_Int
+# backgroundCorrection_Inc
+# 
+
 # Get BeamComposition: percentage of pions, muons and electrons in a 60A beam configuration
 #                       The beam at 60A is 
 pionInBeam60A = 0.688  # 68.8% pions
@@ -19,7 +24,7 @@ pionMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoPionMC_60A.root"
 muonMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoMuonMC_60A.root"
 elecMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoElectronMC_60A.root"
 
-
+pionData_FileName = "/Volumes/Seagate/Elena/TPC/Data60A.root"
 
 # Get Monte Carlo files
 interactingPlotString = "RecoXS/hRecoInteractingKE"
@@ -27,7 +32,7 @@ incidentPlotString    = "RecoXS/hRecoIncidentKE"
 pionMC_File   = TFile.Open(pionMC_FileName)
 muonMC_File   = TFile.Open(muonMC_FileName)
 elecMC_File   = TFile.Open(elecMC_FileName)
-
+pionData_File = TFile.Open(pionData_FileName)
 
 
 # Get Interacting and Incident plots
@@ -38,6 +43,8 @@ pionMC_Inc  = pionMC_File.Get(incidentPlotString)
 muonMC_Inc  = muonMC_File.Get(incidentPlotString)
 elecMC_Inc  = elecMC_File.Get(incidentPlotString)
 
+data_Int  = pionData_File.Get(interactingPlotString)
+data_Inc  = pionData_File.Get(interactingPlotString)
 
 
 
@@ -56,12 +63,30 @@ legend.AddEntry(elecMC_Int,"MC 60A electrons");
 
 
 #Scale according to beam composition, both interacting and incident plots
-elecMC_Int.Scale(elecScale)
-elecMC_Inc.Scale(elecScale)
-muonMC_Int.Scale(muonScale)
-muonMC_Inc.Scale(muonScale)
+elecMC_Int.Scale(elecScale)#dataIntIntegral)
+elecMC_Inc.Scale(elecScale)#dataIncIntegral)
+muonMC_Int.Scale(muonScale)#dataIntIntegral)
+muonMC_Inc.Scale(muonScale)#dataIncIntegral)
+#pionMC_Int.Scale(1./dataIntIntegral)
+#pionMC_Inc.Scale(1./dataIncIntegral)
 
+MCIntIntegral   = pionMC_Int.Integral()  + muonMC_Int.Integral()  + elecMC_Int.Integral() 
+MCIncIntegral   = pionMC_Inc.Integral()  + muonMC_Inc.Integral()  + elecMC_Inc.Integral() 
+dataIntIntegral = data_Int.Integral()
+dataIncIntegral = data_Inc.Integral()
+#MCIntScale   =  dataIntIntegral/MCIntIntegral
+#MCIncScale   =  dataIncIntegral/MCIncIntegral
  
+
+MCIntScale   =  20956./248355.
+MCIncScale   =  20956./248355.
+
+pionMC_Int.Scale(MCIntScale)#dataIntIntegral)
+pionMC_Inc.Scale(MCIncScale)#dataIncIntegral)
+elecMC_Int.Scale(MCIntScale)#dataIncIntegral)
+elecMC_Inc.Scale(MCIncScale)#dataIncIntegral)
+muonMC_Int.Scale(MCIntScale)#dataIntIntegral)
+muonMC_Inc.Scale(MCIncScale)#dataIncIntegral)
 
 
 # Form staggered plots for incident
@@ -84,53 +109,6 @@ for i in xrange(pionMC_Int.GetSize()):
     totHisto_Inc.SetBinContent(i, muonMC_Inc.GetBinContent(i)+elecMC_Inc.GetBinContent(i)+ pionMC_Inc.GetBinContent(i))
 
 
-#PionContent
-cPion60A = TCanvas("cPion60A" ,"Plots Overlay" ,200 ,10 ,900 ,900)
-cPion60A.Divide(2,2) 
-p1 = cPion60A.cd(1)
-p1.SetGrid()
-pionContent_Int = pionMC_Int.Clone("pionContent_Int")
-pionContent_Int.Sumw2()
-pionContent_Int.Divide(totHisto_Int)
-pionContent_Int.Draw("")
-p2 = cPion60A.cd(2)
-p2.SetGrid()
-pionContent_Inc = pionMC_Inc.Clone("pionContent_Inc")
-pionContent_Inc.Sumw2()
-pionContent_Inc.Divide(totHisto_Inc)
-pionContent_Inc.Draw("")
-cPion60A.SetGrid()
-cPion60A.Update()
-
-
-##Plot Staggered plots
-#c60EC = TCanvas("c60S" ,"Electron Content" ,200 ,10 ,1200 ,600)
-#c60EC.Divide(2,1) 
-p3 = cPion60A.cd(3)
-p3.SetGrid()
-interactingStack60A.Draw("histo")
-legend.Draw("same")
-p4 = cPion60A.cd(4)
-p4.SetGrid()
-incidentStack60A.Draw("histo")
-legend.Draw("same")
-cPion60A.Update()
-
-outFile = TFile("BackGroundCorrectionPions60A.root","recreate")
-outFile.cd()
-pionContent_Int.Write("backgroundCorrection_Int",TObject.kWriteDelete)
-pionContent_Inc.Write("backgroundCorrection_Inc",TObject.kWriteDelete)
-
-outFile.Write()
-outFile.Close()
-
-raw_input()  
-
-
-
-
-
-'''
 #Plot Overlaid plots
 c60 = TCanvas("c60" ,"Plots Overlay" ,200 ,10 ,1200 ,600)
 c60.Divide(2,1) 
@@ -144,6 +122,22 @@ elecMC_Inc.Draw("samehisto")
 muonMC_Inc.Draw("samehisto")
 c60.SetGrid()
 c60.Update()
+
+
+#Plot Staggered plots
+c60EC = TCanvas("c60S" ,"Electron Content" ,200 ,10 ,1200 ,600)
+c60EC.Divide(2,1) 
+p1 = c60EC.cd(1)
+p1.SetGrid()
+interactingStack60A.Draw("histo")
+data_Int.Draw("samepe")
+legend.Draw("same")
+p2 = c60EC.cd(2)
+p2.SetGrid()
+incidentStack60A.Draw("histo")
+data_Inc.Draw("samepe")
+legend.Draw("same")
+c60EC.Update()
 
 
 # Understand the electron contribution to the interacting and incident plots
@@ -282,12 +276,7 @@ XSMstack.GetYaxis().SetRangeUser(0.5,1.5)
 XSMstack.GetXaxis().SetRangeUser(0.,1000)
 XSMstack.Draw("pe")
 c60XSM.Update()
-'''
 
-## Final Plots I want out:
-# backgroundCorrection_Int
-# backgroundCorrection_Inc
-# 
 #fileName = "OutEl"+str(muonInBeam60A)+".root"
 #fileOut = TFile(fileName,"recreate")
 #fileOut.Add(XSMstack)
