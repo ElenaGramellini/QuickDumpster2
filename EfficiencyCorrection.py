@@ -169,7 +169,29 @@ XSRecoCorrected.Draw("pesame")
 cTest.Update()
 
 
- 
+cEff = TCanvas("cEff" ,"Eff Correction" ,200 ,10 ,700 ,700)
+cEff.cd()
+cEff.SetGrid()
+effCorr_Int_NotFilt.Draw("")
+effCorr_Inc_NotFilt.SetLineColor(kRed)
+effCorr_Inc_NotFilt.Draw("same")
+effCorr_Int_NotFilt.SetTitle("Efficiency Corrections in Incident and Interacting; KE [MeV]; Efficiency Correction")
+legend1 = TLegend(.54,.52,.84,.70);
+legend1.AddEntry(effCorr_Int_NotFilt        ,"Eff Correction for Interacting");
+legend1.AddEntry(effCorr_Inc_NotFilt        ,"Eff Correction for Incident");
+legend1.Draw("same")
+cEff.Update()
+
+cEff1 = TCanvas("cEff1" ,"RatioOfRatios" ,200 ,10 ,700 ,700)
+cEff1.cd()
+cEff1.SetGrid()
+RoR = effCorr_Int_NotFilt.Clone("RoR")
+RoR.Sumw2()
+RoR.SetTitle("Ratio of Efficiency Ratios; KE [MeV]; Ratio of Ratios")
+RoR.Divide(effCorr_Inc_NotFilt)
+RoR.Draw("")
+cEff1.Update()
+
 outFile = TFile("EfficiencyCorrectionPions60A.root","recreate")
 outFile.cd()
 
@@ -179,6 +201,8 @@ intTrue.Write("interactingTrueMC",TObject.kWriteDelete)
 incTrue.Write("incidentTrueMC",TObject.kWriteDelete)
 intReco.Write("interactingRecoMC",TObject.kWriteDelete)
 incReco.Write("incidentRecoMC",TObject.kWriteDelete)
+
+XSTrueNoFilter .Write() 
 effCorr_Int_NotFilt .Write() 
 effCorr_Inc_NotFilt .Write() 
 effCorr_Int         .Write() 

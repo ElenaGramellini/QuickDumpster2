@@ -15,6 +15,7 @@ efficiencyCorrection_FileName = 'EfficiencyCorrectionPions60A.root'
 efficiencyCorrection_File = TFile.Open(efficiencyCorrection_FileName)
 efficiencyCorrection_Int  = efficiencyCorrection_File.Get("effCorr_Int_NoFilt")
 efficiencyCorrection_Inc  = efficiencyCorrection_File.Get("effCorr_Inc_NoFilt")
+trueXS  = efficiencyCorrection_File.Get("XSTrueNoFilter")
 
 
 pionData_FileName = '/Volumes/Seagate/Elena/TPC/Data60A.root'
@@ -37,8 +38,7 @@ recoData_Inc.SetMarkerStyle(21)
 recoData_Int.SetLineWidth(2)  
 recoData_Inc.SetLineWidth(2)  
 
-#legend = TLegend(.54,.52,.84,.70);
-#legend.AddEntry(recoData_Int   ,"Reconstructed Data");
+
 
 
 
@@ -100,23 +100,11 @@ bkgSubXS.Draw("pe")
 cBkgSub.Update()
 
 
+
 ######################################################################
 ##############    Efficiency Correction Data       ###################
 ######################################################################
 # Get Interacting and Incident plots Reco
-'''
-efficiencyCorrection_Int = recoData_Int.Clone("efficiencyCorrection_Int")
-efficiencyCorrection_Inc = recoData_Inc.Clone("efficiencyCorrection_Inc")
-for i in xrange(efficiencyCorrection_Int.GetSize()):
-    efficiencyCorrection_Int.SetBinContent(i, 1)
-    efficiencyCorrection_Int.SetBinError(i, 0.01)
-    if i < 6 :
-        efficiencyCorrection_Inc.SetBinContent(i, 2)
-        efficiencyCorrection_Inc.SetBinError(i, 0.01)
-    else:
-        efficiencyCorrection_Inc.SetBinContent(i, 0.5)
-        efficiencyCorrection_Inc.SetBinError(i, 0.01)
-'''
 
 
 # Efficiency Corrected Interacting Plot
@@ -149,7 +137,10 @@ effCorrXS.Draw("pe")
 
 cEffCorrected.Update()
 
-
+legend = TLegend(.54,.52,.84,.70);
+legend.AddEntry(recoData_Int   ,"Reconstructed Data");
+legend.AddEntry(bkgSubData_Int ,"Data Background Subtracted");
+legend.AddEntry(effCorrData_Int,"Efficiency Corrected");
 
 
 # All the Cross Section in One Plot
@@ -158,22 +149,39 @@ cSummary.Divide(3,1)
 p1 = cSummary.cd(1)
 p1.SetGrid()
 recoData_Int.Draw("pe")
-#bkgSubData_Int.Draw("pesame")
+bkgSubData_Int.Draw("pesame")
 effCorrData_Int.Draw("pesame")
+legend.Draw("same")
 
 p2 = cSummary.cd(2)
 p2.SetGrid()
 recoData_Inc.Draw("pe")
-#bkgSubData_Inc.Draw("pesame")
+bkgSubData_Inc.Draw("pesame")
 effCorrData_Inc.Draw("pesame")
+
 
 p3 = cSummary.cd(3)
 p3.SetGrid()
 rawXS.Draw("pe")
-#bkgSubXS.Draw("pesame")
+bkgSubXS.Draw("pesame")
 effCorrXS.Draw("pesame")
+trueXS.Draw("pesamehisto")
 cSummary.Update()
 
+cXS = TCanvas("cXS" ,"All Cross Sections" ,40 ,40 ,600 ,600)
+cXS.cd()
+cXS.SetGrid()
+rawXS.Draw("pe")
+bkgSubXS.Draw("pesame")
+#effCorrXS.Draw("pesame")
+#trueXS.Draw("samehisto")
+
+legend2 = TLegend(.54,.52,.84,.70);
+legend2.AddEntry(effCorrXS,"Data Efficiency Corrected");
+legend2.AddEntry(trueXS,"True MC");
+legend2.Draw("same")
+
+cXS.Update()
 
 raw_input()  
 
