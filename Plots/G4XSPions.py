@@ -73,27 +73,25 @@ data_FileName = "/Volumes/Seagate/Elena/TPC/Data60A.root"
 data_File   = TFile.Open(data_FileName)
 interactingPlotString = "RecoXS/hRecoInteractingKE"
 incidentPlotString = "RecoXS/hRecoIncidentKE"
-data_Int    = data_File.Get(incidentPlotString)
+data_Int    = data_File.Get(interactingPlotString)
 data_Inc    = data_File.Get(incidentPlotString)
 XSDataRecoPion = data_Int.Clone("pionMCXSData")
 XSDataRecoPion.Sumw2()
 data_Inc.Sumw2()
-XSDataRecoPion.Divide(data_Inc)
 XSDataRecoPion.Scale(101.10968)
+XSDataRecoPion.Divide(data_Inc)
 XSDataRecoPion.SetLineColor(kBlack)
 XSDataRecoPion.SetLineWidth(2)
 XSDataRecoPion.SetFillColor(0)
 
-
-
-
 c1=TCanvas("c1" ,"Data" ,200 ,10 ,500 ,500) #make nice
 c1.SetGrid ()
 gr . Draw ( "APL" ) ;
-XSDataRecoPion.Draw("samepe")
+XSDataRecoPion.Draw("pesame")
 
 legend = TLegend(.44,.70,.84,.89)
 legend.AddEntry(gr,"G4 Prediction Tot XS")
+legend.AddEntry(XSDataRecoPion,"Raw Data Tot XS")
 legend.Draw("same")
 c1.Update()
 

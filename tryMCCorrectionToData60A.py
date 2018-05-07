@@ -10,9 +10,6 @@ backgroundCorrection_FileName = 'BackGroundCorrectionPions60A.root'
 backgroundCorrection_File = TFile.Open(backgroundCorrection_FileName)
 backgroundCorrection_Int  = backgroundCorrection_File.Get("backgroundCorrection_Int")
 backgroundCorrection_Inc  = backgroundCorrection_File.Get("backgroundCorrection_Inc")
-XS_MC = backgroundCorrection_File.Get("MC_PionOnlyRecoXS")
-XS_MC.SetLineColor(kRed)
-XS_MC.SetFillColor(0)
 
 efficiencyCorrection_FileName = 'EfficiencyCorrectionPions60A.root'
 efficiencyCorrection_File = TFile.Open(efficiencyCorrection_FileName)
@@ -176,56 +173,15 @@ cXS.cd()
 cXS.SetGrid()
 rawXS.Draw("pe")
 bkgSubXS.Draw("pesame")
-XS_MC.Draw("samehisto")
-effCorrXS.Draw("pesame")
-trueXS.Draw("samehisto")
-
+#effCorrXS.Draw("pesame")
+#trueXS.Draw("samehisto")
 
 legend2 = TLegend(.54,.52,.84,.70);
-legend2.AddEntry(rawXS,"Data Raw");
-legend2.AddEntry(bkgSubXS,"Data Bkg Sub");
-legend2.AddEntry(XS_MC,"Pion Only MC");
 legend2.AddEntry(effCorrXS,"Data Efficiency Corrected");
 legend2.AddEntry(trueXS,"True MC");
 legend2.Draw("same")
 
-cXSApples = TCanvas("cXSApples" ,"All Cross Sections" ,40 ,40 ,600 ,600)
-cXSApples.cd()
-cXSApples.SetGrid()
-#rawXS.Draw("pe")
-#bkgSubXS.Draw("pesame")
-XS_MC.Draw("samehisto")
-effCorrXS.Draw("pesame")
-trueXS.Draw("samehisto")
-legend2.Draw("same")
-cXSApples.Update()
-
-
-
-cXSOranges = TCanvas("cXSOranges" ,"All Cross Sections" ,40 ,40 ,600 ,600)
-cXSOranges.cd()
-cXSOranges.SetGrid()
-rawXS.Draw("pe")
-bkgSubXS.Draw("pesame")
-XS_MC.Draw("samehisto")
-#effCorrXS.Draw("pesame")
-#trueXS.Draw("samehisto")
-legend2.Draw("same")
-cXSOranges.Update()
 cXS.Update()
-
-
-outFile = TFile("DataCorrected.root","recreate")
-outFile.cd()
-
-bkgSubXS.Write("pionXS_DataBkgSub"       ,TObject.kWriteDelete)
-effCorrXS.Write("pionXS_DataBkgSubEffCorr",TObject.kWriteDelete)
-
-
-outFile.Write()
-outFile.Close()
-
-
 
 raw_input()  
 

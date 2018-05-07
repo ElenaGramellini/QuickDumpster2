@@ -22,7 +22,7 @@ elecInBeam60A = 0.266  # 26.6% electrons
 elecScale = elecInBeam60A/pionInBeam60A
 muonScale = muonInBeam60A/pionInBeam60A
 
-pionMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoPionMC_60A.root"
+pionMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Pions.root "
 muonMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoMuonMC_60A.root"
 elecMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoElectronMC_60A.root"
 data_FileName = "/Volumes/Seagate/Elena/TPC/Data60A.root"

@@ -4,14 +4,13 @@ import math
 import argparse
 
 
-
-DDMCGeneratedPions = 332000.
-DDMCGeneratedMuons = 334500.
-DDMCGeneratedElect = 334500.
-equalizeDDMCGen    = DDMCGeneratedMuons/DDMCGeneratedPions
-
 # Get BeamComposition: percentage of pions, muons and electrons in a 60A beam configuration
 #                       The beam at 60A is 
+#pionInBeam60A = 0.642  # 68.8% pions
+#muonInBeam60A = 0.092  #  4.6% muons
+#elecInBeam60A = 0.266  # 26.6% electrons
+
+
 pionInBeam60A = 0.688  # 68.8% pions
 muonInBeam60A = 0.046  #  4.6% muons
 elecInBeam60A = 0.266  # 26.6% electrons
@@ -21,9 +20,9 @@ elecInBeam60A = 0.266  # 26.6% electrons
 elecScale = elecInBeam60A/pionInBeam60A
 muonScale = muonInBeam60A/pionInBeam60A
 
-pionMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoPionMC_60A.root"
-muonMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoMuonMC_60A.root"
-elecMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoElectronMC_60A.root"
+pionMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Pions.root"
+muonMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Muon.root"
+elecMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Electron.root"
 
 
 
@@ -44,8 +43,7 @@ pionMC_Inc  = pionMC_File.Get(incidentPlotString)
 muonMC_Inc  = muonMC_File.Get(incidentPlotString)
 elecMC_Inc  = elecMC_File.Get(incidentPlotString)
 
-pionMC_Int.Scale(equalizeDDMCGen)
-pionMC_Inc.Scale(equalizeDDMCGen)
+
 
 
 # Let's assign a color scheme --> check color scheme is the same as G4Beamline
@@ -68,6 +66,7 @@ elecMC_Inc.Scale(elecScale)
 muonMC_Int.Scale(muonScale)
 muonMC_Inc.Scale(muonScale)
 
+ 
 
 
 # Form staggered plots for incident
@@ -90,50 +89,40 @@ for i in xrange(pionMC_Int.GetSize()):
     totHisto_Inc.SetBinContent(i, muonMC_Inc.GetBinContent(i)+elecMC_Inc.GetBinContent(i)+ pionMC_Inc.GetBinContent(i))
 
 
-cCountingPlots = TCanvas("cCountingPlots" ,"Plots Overlay" ,200 ,10 ,900 ,900)
-cCountingPlots.Divide(2,1)
-cCountingPlots.cd(1)
-interactingStack60A.Draw("histo")
-cCountingPlots.cd(2)
-incidentStack60A.Draw("histo")
-cCountingPlots.Update()
+#PionMuE Cross Section
+cRecoPiMuEXS = TCanvas("cRecoPiMuEXS" ,"#pi/#mu/e Reconstructed Cross Section" ,200 ,10 ,900 ,900)
+cRecoPiMuEXS.Divide(2,2) 
+PiMuEXS = totHisto_Int.Clone("MC_PiMuERecoXS")
+PiMuEXS.Sumw2()
+PiMuEXS.Divide(totHisto_Inc)
+PiMuEXS.Scale(101.10968) 
+PiMuEXS.SetTitle("#pi/#mu/e MC Reconstructed Cross Section; K.E. [MeV]; Total Hadronic Cross Section per 50 MeV [barn]")
+PiMuEXS.Draw("pe")
 
-cCrossSection = TCanvas("cCrossSection" ,"Plots Overlay" ,200 ,10 ,900 ,900)
-XSReco = totHisto_Int.Clone("XSRecoBkg")
-#totHisto_Inc.Sumw2()
-XSReco.Divide(totHisto_Inc)
-XSReco.Scale(101.10968)
-XSReco.Draw("pehisto")
-XSReco.SetFillColor(0)
-XSReco.SetTitle("MC Cross Section; KE [MeV]; Cross Section [barns]")
+#PionOnly Cross Section
+cRecoPionOnlyXS = TCanvas("cRecoPionOnlyXS" ,"#pi/#mu/e Reconstructed Cross Section" ,200 ,10 ,900 ,900)
+cRecoPionOnlyXS.Divide(2,2) 
+PionOnlyXS = pionMC_Int.Clone("MC_PionOnlyRecoXS")
+PionOnlyXS.Sumw2()
+PionOnlyXS.Divide(pionMC_Inc)
+PionOnlyXS.Scale(101.10968) 
+PionOnlyXS.SetTitle("#pi MC Reconstructed Cross Section; K.E. [MeV]; Total Hadronic Cross Section per 50 MeV [barn]")
+PionOnlyXS.Draw("pe")
 
-#cCrossSectionPionOnly = TCanvas("cCrossSectionPionOnly" ,"Plots Overlay" ,200 ,10 ,900 ,900)
-XSRecoPion = pionMC_Int.Clone("pionMCXS")
-XSRecoPion.Divide(pionMC_Inc)
-XSRecoPion.Scale(101.10968)
-XSRecoPion.SetLineColor(kRed)
-XSRecoPion.Draw("pesamehisto")
-XSRecoPion.SetFillColor(0)
-legend1 = TLegend(.54,.52,.84,.70);
-legend1.AddEntry(XSRecoPion,"MC Pion Only");
-legend1.AddEntry(XSReco,"MC Pion Muon Electron");
-legend1.Draw("same")
 
-################ PionContent ################ 
+#PionContent
 cPion60A = TCanvas("cPion60A" ,"Plots Overlay" ,200 ,10 ,900 ,900)
 cPion60A.Divide(2,2) 
 p1 = cPion60A.cd(1)
 p1.SetGrid()
 pionContent_Int = pionMC_Int.Clone("pionContent_Int")
-#pionContent_Int.Sumw2()
-#totHisto_Int
+pionContent_Int.Sumw2()
 pionContent_Int.Divide(totHisto_Int)
-#pionContent_Int.Sumw2()
 pionContent_Int.Draw("")
 p2 = cPion60A.cd(2)
 p2.SetGrid()
 pionContent_Inc = pionMC_Inc.Clone("pionContent_Inc")
-#pionContent_Inc.Sumw2()
+pionContent_Inc.Sumw2()
 pionContent_Inc.Divide(totHisto_Inc)
 pionContent_Inc.Draw("")
 cPion60A.SetGrid()
@@ -141,8 +130,6 @@ cPion60A.Update()
 
 
 ##Plot Staggered plots
-#c60EC = TCanvas("c60S" ,"Electron Content" ,200 ,10 ,1200 ,600)
-#c60EC.Divide(2,1) 
 p3 = cPion60A.cd(3)
 p3.SetGrid()
 interactingStack60A.Draw("histo")
@@ -157,7 +144,8 @@ outFile = TFile("BackGroundCorrectionPions60A.root","recreate")
 outFile.cd()
 pionContent_Int.Write("backgroundCorrection_Int",TObject.kWriteDelete)
 pionContent_Inc.Write("backgroundCorrection_Inc",TObject.kWriteDelete)
-
+PiMuEXS.Write()
+PionOnlyXS.Write()
 outFile.Write()
 outFile.Close()
 
@@ -321,6 +309,15 @@ XSMstack.Draw("pe")
 c60XSM.Update()
 '''
 
+## Final Plots I want out:
+# backgroundCorrection_Int
+# backgroundCorrection_Inc
+# 
+#fileName = "OutEl"+str(muonInBeam60A)+".root"
+#fileOut = TFile(fileName,"recreate")
+#fileOut.Add(XSMstack)
+#fileOut.Write()
+#fileOut.Close()
 raw_input()  
 
 

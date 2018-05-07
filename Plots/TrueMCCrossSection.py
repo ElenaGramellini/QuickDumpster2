@@ -14,8 +14,9 @@ def CalculateErrorRatio (num, numErr, den, denErr):
         totErrorRatio = 10000.
     return totErrorRatio
 
-pionMCNoFilter_FileName = '/Volumes/Seagate/Elena/TPC/TruePionGen.root'
-pionMC_FileName = '/Volumes/Seagate/Elena/TPC/MC60A_Pions.root'
+TrueXSPionMC_FileName = '/Volumes/Seagate/Elena/MCContamination/TrueAnaPions60A_NoFilter.root'
+pionMC_FileName = '/Volumes/Seagate/Elena/MCContamination/tempMCPions.root'
+pionMC_FileName = '/Volumes/Seagate/Elena/TPC/tempMCPions.root'
 
 
 # Get Interacting and Incident plots Reco
@@ -27,9 +28,9 @@ incReco  = pionMC_File.Get("RecoXS/hRecoIncidentKE")
 
 
 # Get Interacting and Incident plots for all true primary in TPC
-pionMCNoFilter   = TFile.Open(pionMCNoFilter_FileName)
-intTrueNoFilter  = pionMCNoFilter.Get("TrueXS/hInteractingKE")
-incTrueNoFilter  = pionMCNoFilter.Get("TrueXS/hIncidentKE")
+TrueXSPionMC     = TFile.Open(TrueXSPionMC_FileName)
+intTrueNoFilter  = TrueXSPionMC.Get("TrueXS/hInteractingKE")
+incTrueNoFilter  = TrueXSPionMC.Get("TrueXS/hIncidentKE")
 
 # Assign colors
 intReco.SetLineColor(kRed)  

@@ -1,0 +1,124 @@
+from ROOT import *
+import os
+import math
+import argparse
+
+
+gStyle.SetOptStat(0)
+
+MC_FileName = 'BackGroundCorrectionPions60A.root'
+MC_File = TFile.Open(MC_FileName)
+recoMCAll_XS   = MC_File.Get("MC_PiMuERecoXS")
+recoMCPion_XS  = MC_File.Get("MC_PionOnlyRecoXS")
+recoMCAll_XS.SetFillColor(0)
+recoMCAll_XS.SetLineColor(kBlue)
+recoMCPion_XS.SetFillColor(0)
+recoMCPion_XS.SetLineColor(kRed)
+
+trueMC_FileName = 'EfficiencyCorrectionPions60A.root'
+trueMC_File = TFile.Open(trueMC_FileName)
+trueMCPion_XS   = trueMC_File.Get("XSTrueNoFilter")
+trueMCPion_XS.SetFillColor(0)
+trueMCPion_XS.SetLineColor(kGreen-2)
+
+
+pionData_FileName = 'DataRaw.root'
+pion_File = TFile.Open(pionData_FileName)
+rawData_XS  = pion_File.Get("pionXS_Data")
+rawData_XS.SetMarkerSize(0.5)  
+rawData_XS.SetMarkerStyle(21)
+
+pionDataCorrected_FileName = 'DataCorrected.root'
+pionDataCorrected_File = TFile.Open(pionDataCorrected_FileName)
+bkgSubData_XS   = pionDataCorrected_File.Get("pionXS_DataBkgSub")
+effCorrData_XS  = pionDataCorrected_File.Get("pionXS_DataBkgSubEffCorr")
+
+
+# Uncorrected Data and Pi/Mu/E MC
+cRawDataRecoMCAll = TCanvas("cRawDataRecoMCAll" ,"Uncorrected Data Uncorrected #pi/#mu/e MC" ,0 ,0 ,600 ,600)
+cRawDataRecoMCAll.SetGrid()
+cRawDataRecoMCAll.cd()
+rawData_XS.SetTitle("Raw Data and Reco #pi/#mu/e MC;Kinetic Energy [MeV]; Cross Section per 50 MeV [barn]")
+rawData_XS.GetXaxis().SetRangeUser(0,1000)
+rawData_XS.Draw("pe")
+recoMCAll_XS.Draw("histosame")
+
+legendRawDataRecoMCAll = TLegend(.54,.52,.84,.70);
+legendRawDataRecoMCAll.AddEntry(rawData_XS   ,"Reconstructed Data");
+legendRawDataRecoMCAll.AddEntry(recoMCAll_XS ,"MC Reconstruced, #pi/#mu/e");
+legendRawDataRecoMCAll.Draw("same")
+cRawDataRecoMCAll.Update()
+
+
+# BackGround Subtracted Data and Pi MC
+cBkgSubDataRecoMCPi = TCanvas("cBkgSubDataRecoMCPi" ,"Background Subtracted Data, Uncorrected #pi MC" ,0 ,0 ,600 ,600)
+cBkgSubDataRecoMCPi.SetGrid()
+cBkgSubDataRecoMCPi.cd()
+bkgSubData_XS.SetTitle("Raw Data and Reco #pi/#mu/e MC;Kinetic Energy [MeV]; Cross Section per 50 MeV [barn]")
+bkgSubData_XS.GetXaxis().SetRangeUser(0,1000)
+bkgSubData_XS.Draw("pe")
+recoMCPion_XS.Draw("histosame")
+
+legendBkgSubDataRecoMCPi = TLegend(.54,.52,.84,.70);
+legendBkgSubDataRecoMCPi.AddEntry(bkgSubData_XS ,"Data, Background Subtracted");
+legendBkgSubDataRecoMCPi.AddEntry(recoMCPion_XS ,"MC Reconstruced, #pi Only");
+legendBkgSubDataRecoMCPi.Draw("same")
+cBkgSubDataRecoMCPi.Update()
+
+
+# BackGround Subtracted and Efficiency Corrected Data and True MC
+cBkgSubEffCorrDataRecoMCPi = TCanvas("cBkgSubEffCorrDataRecoMCPi" ,"Background Subtracted Data, Uncorrected #pi MC" ,0 ,0 ,600 ,600)
+cBkgSubEffCorrDataRecoMCPi.cd()
+cBkgSubEffCorrDataRecoMCPi.SetGrid()
+effCorrData_XS.SetTitle("Raw Data and Reco #pi/#mu/e MC; Cross Section per 50 MeV [barn]; Kinetic Energy [MeV]")
+effCorrData_XS.GetXaxis().SetRangeUser(0,1000)
+effCorrData_XS.Draw("pe")
+trueMCPion_XS.Draw("histosame")
+
+legendBkgSubEffCorrDataRecoMCPi = TLegend(.54,.52,.84,.70);
+legendBkgSubEffCorrDataRecoMCPi.AddEntry(effCorrData_XS ,"#splitline{Data Background Subtracted}{Efficiency Corrected}");
+legendBkgSubEffCorrDataRecoMCPi.AddEntry(trueMCPion_XS  ,"MC True, #pi Only");
+legendBkgSubEffCorrDataRecoMCPi.Draw("same")
+cBkgSubEffCorrDataRecoMCPi.Update()
+
+# All Data
+cAllData = TCanvas("cAllData" ,"Data" ,0 ,0 ,600 ,600)
+cAllData.cd()
+cAllData.SetGrid()
+rawData = rawData_XS.Clone("rawDataAgain")
+rawData.SetTitle("Raw Data + Background Subtracted + Eff Corrected;Kinetic Energy [MeV]; Cross Section per 50 MeV [barn]")
+rawData.Draw("pe")
+effCorrData_XS.Draw("pesame")
+bkgSubData_XS.Draw("pesame")
+
+legendData = TLegend(.54,.52,.84,.70);
+legendData.AddEntry(rawData        , "Reconstructed Data");
+legendData.AddEntry(bkgSubData_XS  , "Data, Background Subtracted");
+legendData.AddEntry(effCorrData_XS , "#splitline{Data Background Subtracted}{Efficiency Corrected}");
+legendData.Draw("same")
+cAllData.Update()
+
+
+# All MC
+cAllMC = TCanvas("cAllMC" ,"MC" ,0 ,0 ,600 ,600)
+cAllMC.cd()
+cAllMC.SetGrid()
+rawMC = recoMCAll_XS.Clone("rawMCAgain")
+rawMC.SetTitle("Reco MC #pi/#mu/e + Reco MC #pi only + True MC #pi;Kinetic Energy [MeV]; Cross Section per 50 MeV [barn]")
+rawMC.Draw("pe")
+recoMCPion_XS.Draw("pesame")
+trueMCPion_XS.Draw("pesame")
+
+legendMC = TLegend(.54,.52,.84,.70);
+legendMC.AddEntry(rawMC         ,"MC Reconstruced, #pi/#mu/e");
+legendMC.AddEntry(recoMCPion_XS ,"MC Reconstruced, #pi Only");
+legendMC.AddEntry(trueMCPion_XS ,"MC True, #pi Only");
+
+legendMC.Draw("same")
+cAllMC.Update()
+
+
+raw_input()  
+
+
+
