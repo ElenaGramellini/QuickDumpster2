@@ -164,7 +164,7 @@ legendInt.AddEntry(muonMC_Int,"MC 60A predicted muons");
 legendInt.AddEntry(elecMC_Int,"MC 60A predicted electrons");
 legendInt.Draw("same")
 p1.Update()
-p1.SaveAs(noRootFileName+"_StatSyst.png")
+p1.SaveAs(noRootFileName+"_MCData_Int_StatSyst.pdf")
 
 p2 = TCanvas("cHistos2","cHistos",600,600)
 p2.SetGrid()
@@ -188,7 +188,7 @@ legendInc.AddEntry(elecMC_Int,"MC 60A predicted electrons");
 
 legendInc.Draw("same")
 p2.Update()
-p2.SaveAs(noRootFileName+"_StatSysc.png")
+p2.SaveAs(noRootFileName+"_MCData_Inc_StatSyst.pdf")
 
 cXS = TCanvas("cXS","cXS",600,600)
 cXS.SetGrid()
@@ -207,7 +207,7 @@ legendXS.AddEntry(MC_XS,  "MC Reco -60A #pi/#mu/e");
 
 legendXS.Draw("same")
 cXS.Update()
-cXS.SaveAs(noRootFileName+".png")
+cXS.SaveAs(noRootFileName+"_MCData_XS_StatSyst.pdf")
 
 #####################################################################
 #######################    Save to File   ###########################

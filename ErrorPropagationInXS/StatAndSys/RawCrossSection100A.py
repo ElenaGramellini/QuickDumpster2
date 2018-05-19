@@ -135,7 +135,7 @@ legendInt.AddEntry(hInteractingKE_Stat,"Raw -100A Data Stat Only");
 legendInt.AddEntry(grInt,   "Raw -100A Data Stat and Sys");
 legendInt.Draw("same")
 p1.Update()
-p1.SaveAs(noRootFileName+"_StatSyst.png")
+p1.SaveAs(noRootFileName+"_Data_Int_StatSyst.png")
 
 p2 = TCanvas("cHistos2","cHistos",600,600)
 p2.SetGrid()
@@ -152,7 +152,7 @@ legendInc.AddEntry(hIncidentKE_Stat,"Raw -100A Data Stat Only");
 legendInc.AddEntry(grInc,   "Raw -100A Data Stat and Sys");
 legendInc.Draw("same")
 p2.Update()
-p2.SaveAs(noRootFileName+"_StatSysc.png")
+p2.SaveAs(noRootFileName+"_Data_Inc_StatSyst.png")
 
 cXS = TCanvas("cXS","cXS",600,600)
 cXS.SetGrid()
@@ -167,7 +167,7 @@ legendXS.AddEntry(XS_Stat,"Raw -100A Data Stat Only");
 legendXS.AddEntry(grXS,   "Raw -100A Data Stat and Sys");
 legendXS.Draw("same")
 cXS.Update()
-cXS.SaveAs(noRootFileName+".png")
+cXS.SaveAs(noRootFileName+"_Data_XS_StatSyst.png")
 
 #####################################################################
 #######################    Save to File   ###########################
