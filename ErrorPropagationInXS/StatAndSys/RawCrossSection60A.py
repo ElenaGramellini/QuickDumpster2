@@ -6,12 +6,6 @@ from array import array
 gStyle.SetOptStat(0)
 
 
-
-
-# 100 A
-"../Systematics/XSRaw_SysOnlyUnc_SystematicsEnergy100A.root"
-"../StatOnly/XSRaw_StatOnlyUnc_Data100A.root"
-
 inFileName          = "../StatOnly/XSRaw_StatOnlyUnc_Data60A.root"
 f                   = root.TFile(inFileName)
 hInteractingKE_Stat = f.Get("hInteractingKE_Out")
@@ -89,6 +83,15 @@ grXS.SetFillColor(kWhite)
 #######################    Aestetics   ##############################
 #####################################################################
 
+lariatHead = TLatex();
+lariatHead.SetNDC();
+lariatHead.SetTextFont(62);
+lariatHead.SetTextSize(0.04);
+lariatHead.SetTextAlign(40);
+
+
+
+
 hInteractingKE_Stat.SetFillColor(kWhite)
 hIncidentKE_Stat   .SetFillColor(kWhite)
 XS_Stat            .SetFillColor(kWhite)
@@ -102,9 +105,9 @@ hInteractingKE_Stat.SetMarkerSize(0.5)
 hIncidentKE_Stat   .SetMarkerSize(0.5)
 XS_Stat            .SetMarkerSize(0.5)
 
-grInt.SetTitle("Raw Candidate Interacting;Kinetic Energy [MeV]; N_{Interacting} per 50 MeV")
-grInc.SetTitle("Raw Candidate Incident;Kinetic Energy [MeV]; N_{Incident} per 50 MeV")
-grXS.SetTitle("Raw Cross Section; Kinetic Energy [MeV]; #sigma_{TOT} per 50 MeV [barn]")
+grInt.SetTitle(";Kinetic Energy [MeV]; N_{Interacting} per 50 MeV")
+grInc.SetTitle(";Kinetic Energy [MeV]; N_{Incident} per 50 MeV")
+grXS.SetTitle("; Kinetic Energy [MeV]; #sigma_{TOT} per 50 MeV [barn]")
 
 hInteractingKE_Stat.GetYaxis().SetTitleOffset(1.6)
 hIncidentKE_Stat   .GetYaxis().SetTitleOffset(1.6)
@@ -114,15 +117,17 @@ XS_Stat            .GetYaxis().SetTitleOffset(1.2)
 p1 = TCanvas("cHistos1","cHistos",600,600)
 p1.SetGrid()
 p1.SetLeftMargin(0.13)
+
+#lariatHead.DrawLatex(0.13,0.84,""); 
 grInt.GetXaxis().SetRangeUser(0,1200.)
 grInt.GetYaxis().SetRangeUser(0,5000.)
 grInt.Draw("AP")
 hInteractingKE_Stat.Draw("e0same")
-
+lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
 
 legendInt = TLegend(.54,.75,.90,.90);
-legendInt.AddEntry(hInteractingKE_Stat,"-60A Data Stat Only");
-legendInt.AddEntry(grInt,   "-60A Data Stat and Sys");
+legendInt.AddEntry(hInteractingKE_Stat,"Raw -60A Data Stat Only");
+legendInt.AddEntry(grInt,   "Raw -60A Data Stat and Sys");
 legendInt.Draw("same")
 p1.Update()
 p1.SaveAs(noRootFileName+"_StatSyst.png")
@@ -134,9 +139,12 @@ grInc.GetXaxis().SetRangeUser(0,1200.)
 grInc.GetYaxis().SetRangeUser(0,500000.)
 grInc.Draw("AP")
 hIncidentKE_Stat.Draw("e0same")
+lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
+#lariatHead.DrawLatex(0.13,0.84,""); 
+
 legendInc = TLegend(.54,.75,.90,.90);
-legendInc.AddEntry(hIncidentKE_Stat,"-60A Data Stat Only");
-legendInc.AddEntry(grInc,   "-60A Data Stat and Sys");
+legendInc.AddEntry(hIncidentKE_Stat,"Raw -60A Data Stat Only");
+legendInc.AddEntry(grInc,   "Raw -60A Data Stat and Sys");
 legendInc.Draw("same")
 p2.Update()
 p2.SaveAs(noRootFileName+"_StatSysc.png")
@@ -147,9 +155,11 @@ grXS.GetXaxis().SetRangeUser(0,1200.)
 grXS.GetYaxis().SetRangeUser(0,4.)
 grXS.Draw("AP")
 XS_Stat.Draw("e0same")
+lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
+#lariatHead.DrawLatex(0.13,0.84,"same"); 
 legendXS = TLegend(.54,.52,.84,.70);
-legendXS.AddEntry(XS_Stat,"-60A Data Stat Only");
-legendXS.AddEntry(grXS,   "-60A Data Stat and Sys");
+legendXS.AddEntry(XS_Stat,"Raw -60A Data Stat Only");
+legendXS.AddEntry(grXS,   "Raw -60A Data Stat and Sys");
 legendXS.Draw("same")
 cXS.Update()
 cXS.SaveAs(noRootFileName+".png")

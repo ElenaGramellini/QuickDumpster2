@@ -33,7 +33,7 @@ elecScale = elecInBeam60A/pionInBeam60A
 muonScale = muonInBeam60A/pionInBeam60A
 
 
-pionMC_FileName = "/Volumes/Seagate/Elena/TPC/XSMCPionWithSecondaries60A_histo.root"
+pionMC_FileName = "/Volumes/Seagate/Elena/TPC/XSMCPionWithSecondaries_histo.root"
 muonMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Muon.root"
 elecMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Electron.root"
 
