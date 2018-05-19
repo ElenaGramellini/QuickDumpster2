@@ -1,0 +1,18 @@
+Available root files
+
+
+
+Efficiency Correction Macro:
+input :  MCReco Pion Only,  MCTrue  
+output:  Eff Correction
+plot  :  True XS, RecoMCXS, RecoMCXS with Correction Applied
+
+
+
+Background Correction Macro:
+input :  MCReco Pion, Electron, Muon  
+output:  Background Correction
+
+
+
+ 

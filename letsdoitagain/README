@@ -1,0 +1,40 @@
+Available root files
+
+/Volumes/Seagate/Elena/TPC/AngleCut_0.08334_histo_60A.root
+/Volumes/Seagate/Elena/TPC/AngleCut_100A_histo.root
+/Volumes/Seagate/Elena/TPC/AngleCut_100A_histo_20000.root
+
+/Volumes/Seagate/Elena/TPC/Data100A.root
+/Volumes/Seagate/Elena/TPC/Data60A.root
+
+/Volumes/Seagate/Elena/TPC/MC100A_Electron.root
+/Volumes/Seagate/Elena/TPC/MC100A_Muon.root
+/Volumes/Seagate/Elena/TPC/MC100A_Pions.root
+
+/Volumes/Seagate/Elena/TPC/MC60A_Electron.root
+/Volumes/Seagate/Elena/TPC/MC60A_Muon.root
+/Volumes/Seagate/Elena/TPC/MC60A_Pions.root
+
+/Volumes/Seagate/Elena/TPC/TruePionGen60A.root
+/Volumes/Seagate/Elena/TPC/XSMCPionWithSecondaries60A_histo.root
+
+
+
+
+
+
+
+Efficiency Correction Macro:
+input :  MCReco Pion Only,  MCTrue  
+output:  Eff Correction
+plot  :  True XS, RecoMCXS, RecoMCXS with Correction Applied
+
+
+
+Background Correction Macro:
+input :  MCReco Pion, Electron, Muon  
+output:  Background Correction
+
+
+
+ 

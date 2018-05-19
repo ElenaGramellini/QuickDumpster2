@@ -1,0 +1,333 @@
+from ROOT import *
+import os
+import math
+import argparse
+
+from ROOT import TEfficiency
+from ROOT import gStyle , TCanvas , TGraphErrors
+from array import array
+
+
+
+def calculateXSPlot(InteractingHisto, IncidentHisto, Name  ):
+    XS =  InteractingHisto.Clone(Name)
+   # XS.Sumw2()
+   # IncidentHisto.Sumw2()
+    XS.Scale(101.10968)
+    XS.Divide(IncidentHisto)
+    return XS
+
+gStyle.SetOptStat(0)
+
+## Data
+
+data60A_File    = TFile.Open("/Volumes/Seagate/Elena/TPC/XSMCPionWithSecondaries60A_histo.root")
+data100A_File   = TFile.Open("/Volumes/Seagate/Elena/TPC/MC100A_Pions.root ")
+
+interactingPlotString = "RecoXS/hRecoInteractingKE"
+incidentPlotString    = "RecoXS/hRecoIncidentKE"
+data60A_Int    = data60A_File.Get("RecoXSPionOnly/hRecoInteractingKE")
+data60A_Inc    = data60A_File.Get("RecoXSPionOnly/hRecoIncidentKE")
+data100A_Int    = data100A_File.Get("RecoXSPionOnly/hRecoInteractingKE")
+data100A_Inc    = data100A_File.Get("RecoXSPionOnly/hRecoIncidentKE")
+
+XSDataRecoPion60A = calculateXSPlot(data60A_Int, data60A_Inc , "pionXS_Data60A")
+XSDataRecoPion100A = calculateXSPlot(data100A_Int, data100A_Inc , "pionXS_Data100A")
+
+
+XSDataRecoPion100A.SetLineColor(kRed)
+
+c1=TCanvas("c1" ,"Data" ,200 ,10 ,500 ,500) #make nice
+c1.SetGrid ()
+XSDataRecoPion60A.Draw("pe")
+XSDataRecoPion100A.Draw("pesame")
+c1.Update()
+
+
+
+## MC Reco
+MCPiOnly60A_File  = TFile.Open("/Volumes/Seagate/Elena/TPC/XSMCPionWithSecondaries60A_histo.root")
+MCPiOnly100A_File = TFile.Open("/Volumes/Seagate/Elena/TPC/MC100A_Pions.root")
+
+interactingPlotString = "RecoXSPionOnly/hRecoInteractingKE"
+incidentPlotString    = "RecoXSPionOnly/hRecoIncidentKE"
+MCPiOnly60A_Int     = MCPiOnly60A_File .Get(interactingPlotString)
+MCPiOnly60A_Inc     = MCPiOnly60A_File .Get(incidentPlotString)
+MCPiOnly100A_Int    = MCPiOnly100A_File.Get(interactingPlotString)
+MCPiOnly100A_Inc    = MCPiOnly100A_File.Get(incidentPlotString)
+
+XSMCPiOnlyRecoPion60A  = calculateXSPlot(MCPiOnly60A_Int , MCPiOnly60A_Inc  , "pionXS_MCPiOnly60A")
+XSMCPiOnlyRecoPion100A = calculateXSPlot(MCPiOnly100A_Int, MCPiOnly100A_Inc , "pionXS_MCPiOnly100A")
+
+
+XSMCPiOnlyRecoPion100A.SetLineColor(kRed)
+
+c2=TCanvas("c2" ,"MCPiOnly" ,200 ,10 ,500 ,500) #make nice
+c2.SetGrid ()
+XSMCPiOnlyRecoPion60A.Draw("pe")
+XSMCPiOnlyRecoPion100A.Draw("pesame")
+c2.Update()
+
+
+
+## MCTrue Reco
+MCTruePiOnly60A_File  = TFile.Open("/Volumes/Seagate/Elena/TPC/XSMCPionWithSecondaries60A_histo.root")
+MCTruePiOnly100A_File = TFile.Open("/Volumes/Seagate/Elena/TPC/MC100A_Pions.root")
+
+interactingPlotString = "TrueXS/hInteractingKE"
+incidentPlotString    = "TrueXS/hIncidentKE"
+MCTruePiOnly60A_Int     = MCTruePiOnly60A_File .Get(interactingPlotString)
+MCTruePiOnly60A_Inc     = MCTruePiOnly60A_File .Get(incidentPlotString)
+MCTruePiOnly100A_Int    = MCTruePiOnly100A_File.Get(interactingPlotString)
+MCTruePiOnly100A_Inc    = MCTruePiOnly100A_File.Get(incidentPlotString)
+
+XSMCTruePiOnlyPion60A  = calculateXSPlot(MCTruePiOnly60A_Int , MCTruePiOnly60A_Inc  , "pionXS_MCTruePiOnly60A")
+XSMCTruePiOnlyPion100A = calculateXSPlot(MCTruePiOnly100A_Int, MCTruePiOnly100A_Inc , "pionXS_MCTruePiOnly100A")
+
+
+XSMCTruePiOnlyPion100A.SetLineColor(kRed)
+
+c3=TCanvas("c3" ,"MCTruePiOnly" ,200 ,10 ,500 ,500) #make nice
+c3.SetGrid ()
+XSMCTruePiOnlyPion60A.Draw("pe")
+XSMCTruePiOnlyPion100A.Draw("pesame")
+c3.Update()
+
+
+## MCTrue Gen
+MCTrueGenPiOnly60A_File  = TFile.Open("/Volumes/Seagate/Elena/TPC/TruePionGen60A.root")
+MCTrueGenPiOnly100A_File = TFile.Open("/Volumes/Seagate/Elena/TPC/AngleCut_100A_histo.root")
+
+interactingPlotString = "TrueXS/hInteractingKE"
+incidentPlotString    = "TrueXS/hIncidentKE"
+MCTrueGenPiOnly60A_Int     = MCTrueGenPiOnly60A_File .Get(interactingPlotString)
+MCTrueGenPiOnly60A_Inc     = MCTrueGenPiOnly60A_File .Get(incidentPlotString)
+MCTrueGenPiOnly100A_Int    = MCTrueGenPiOnly100A_File.Get(interactingPlotString)
+MCTrueGenPiOnly100A_Inc    = MCTrueGenPiOnly100A_File.Get(incidentPlotString)
+
+XSMCTrueGenPiOnlyPion60A  = calculateXSPlot(MCTrueGenPiOnly60A_Int , MCTrueGenPiOnly60A_Inc  , "pionXS_MCTrueGenPiOnly60A")
+XSMCTrueGenPiOnlyPion100A = calculateXSPlot(MCTrueGenPiOnly100A_Int, MCTrueGenPiOnly100A_Inc , "pionXS_MCTrueGenPiOnly100A")
+
+
+XSMCTrueGenPiOnlyPion100A.SetLineColor(kRed)
+
+c4=TCanvas("c4" ,"MCTrueGenPiOnly" ,200 ,10 ,500 ,500) #make nice
+c4.SetGrid()
+XSMCTrueGenPiOnlyPion60A.Draw("pe")
+XSMCTrueGenPiOnlyPion100A.Draw("pesame")
+
+XSMCTruePiOnlyPion60A .SetLineColor(kGray+2)
+XSMCTruePiOnlyPion100A.SetLineColor(kMagenta)
+
+XSMCTruePiOnlyPion60A.Draw("pesame")
+XSMCTruePiOnlyPion100A.Draw("pesame")
+
+XSMCTrueGenPiOnlyPion60A.SetLineColor(kGreen-1)
+XSMCTrueGenPiOnlyPion100A.SetLineColor(kGreen-2)
+
+XSMCTrueGenPiOnlyPion60A .SetLineWidth(2)
+XSMCTrueGenPiOnlyPion100A.SetLineWidth(2)
+XSMCTruePiOnlyPion60A    .SetLineWidth(2)
+XSMCTruePiOnlyPion100A   .SetLineWidth(2)
+
+legend = TLegend(.44,.70,.84,.89)
+legend.AddEntry(XSMCTrueGenPiOnlyPion60A ,"Gen MC  60A  Tot XS")
+legend.AddEntry(XSMCTrueGenPiOnlyPion100A,"Gen MC 100A  Tot XS")
+legend.AddEntry(XSMCTruePiOnlyPion60A ,"True MC  60A Tot XS")
+legend.AddEntry(XSMCTruePiOnlyPion100A,"True MC 100A Tot XS")
+legend.Draw("same")
+
+c4.Update()
+
+
+
+effCorr_Int_60A  = MCTrueGenPiOnly60A_Int.Clone("effCorr_Int_60A") 
+effCorr_Inc_60A  = MCTrueGenPiOnly60A_Inc.Clone("effCorr_Inc_60A") 
+effCorr_Int_100A = MCTrueGenPiOnly100A_Int.Clone("effCorr_Int_100A") 
+effCorr_Inc_100A = MCTrueGenPiOnly100A_Inc.Clone("effCorr_Inc_100A") 
+
+
+effCorr_Int_60A  .Divide(MCPiOnly60A_Int ) 
+effCorr_Inc_60A  .Divide(MCPiOnly60A_Inc ) 
+effCorr_Int_100A .Divide(MCPiOnly100A_Int) 
+effCorr_Inc_100A .Divide(MCPiOnly100A_Inc) 
+
+
+
+############################# Apply Efficiency Correction on MC ##########################
+c5=TCanvas("c5" ,"MCTrueGenPiOnly" ,200 ,10 ,500 ,500) #make nice
+c5.SetGrid ()
+XSMCTrueGenPiOnlyPion60A.Draw("pe")
+XSMCTrueGenPiOnlyPion100A.Draw("pesame")
+
+MCPiOnly60A_Int_EffCorr  = MCPiOnly60A_Int .Clone("MCPiOnly60A_Int_EffCorr")
+MCPiOnly60A_Inc_EffCorr  = MCPiOnly60A_Inc .Clone("MCPiOnly60A_Inc_EffCorr")
+MCPiOnly100A_Int_EffCorr = MCPiOnly100A_Int.Clone("MCPiOnly100A_Int_EffCorr")
+MCPiOnly100A_Inc_EffCorr = MCPiOnly100A_Inc.Clone("MCPiOnly100A_Inc_EffCorr")
+
+MCPiOnly60A_Int_EffCorr .Multiply(effCorr_Int_60A)
+MCPiOnly60A_Inc_EffCorr .Multiply(effCorr_Inc_60A)
+MCPiOnly100A_Int_EffCorr.Multiply(effCorr_Int_100A)
+MCPiOnly100A_Inc_EffCorr.Multiply(effCorr_Inc_100A)
+
+XSMCPiOnlyPion60A_EffCorr  = calculateXSPlot(MCPiOnly60A_Int_EffCorr , MCPiOnly60A_Inc_EffCorr  , "XSMCPiOnlyPion60A_EffCorr")
+XSMCPiOnlyPion100A_EffCorr = calculateXSPlot(MCPiOnly100A_Int_EffCorr, MCPiOnly100A_Inc_EffCorr , "XSMCPiOnlyPion100A_EffCorr")
+
+XSMCPiOnlyPion60A_EffCorr.Draw("pesame")
+XSMCPiOnlyPion100A_EffCorr.Draw("pesame")
+
+XSMCTrueGenPiOnlyPion60A .SetLineWidth(2)
+XSMCTrueGenPiOnlyPion100A.SetLineWidth(2)
+XSMCPiOnlyPion60A_EffCorr    .SetLineWidth(2)
+XSMCPiOnlyPion100A_EffCorr   .SetLineWidth(2)
+XSMCPiOnlyPion60A_EffCorr    .SetLineColor(kGray+2)
+XSMCPiOnlyPion100A_EffCorr   .SetLineColor(kRed)
+
+legend = TLegend(.44,.70,.84,.89)
+legend.AddEntry(XSMCTrueGenPiOnlyPion60A ,"Gen MC  60A  Tot XS")
+legend.AddEntry(XSMCTrueGenPiOnlyPion100A,"Gen MC 100A  Tot XS")
+legend.AddEntry(XSMCPiOnlyPion60A_EffCorr ,"Eff Corr Reco MC   60A Tot XS")
+legend.AddEntry(XSMCPiOnlyPion100A_EffCorr,"Eff Corr Reco MC  100A Tot XS")
+legend.Draw("same")
+c5.Update()
+
+
+############################# Apply Efficiency Correction on Data ##########################
+'''
+c6=TCanvas("c6" ,"DataTrueGenPiOnly" ,200 ,10 ,500 ,500) #make nice
+c6.SetGrid ()
+XSMCTrueGenPiOnlyPion60A.Draw("pe")
+XSMCTrueGenPiOnlyPion100A.Draw("pesame")
+
+Data60A_Int_EffCorr  = data60A_Int .Clone("Data60A_Int_EffCorr")
+Data60A_Inc_EffCorr  = data60A_Inc .Clone("Data60A_Inc_EffCorr")
+Data100A_Int_EffCorr = data100A_Int.Clone("Data100A_Int_EffCorr")
+Data100A_Inc_EffCorr = data100A_Inc.Clone("Data100A_Inc_EffCorr")
+
+Data60A_Int_EffCorr .Multiply(effCorr_Int_60A)
+Data60A_Inc_EffCorr .Multiply(effCorr_Inc_60A)
+Data100A_Int_EffCorr.Multiply(effCorr_Int_100A)
+Data100A_Inc_EffCorr.Multiply(effCorr_Inc_100A)
+
+XSDataPion60A_EffCorr  = calculateXSPlot(Data60A_Int_EffCorr , Data60A_Inc_EffCorr  , "XSDataPion60A_EffCorr")
+XSDataPion100A_EffCorr = calculateXSPlot(Data100A_Int_EffCorr, Data100A_Inc_EffCorr , "XSDataPion100A_EffCorr")
+
+XSDataPion60A_EffCorr.Draw("pesame")
+XSDataPion100A_EffCorr.Draw("pesame")
+
+XSMCTrueGenPiOnlyPion60A .SetLineWidth(2)
+XSMCTrueGenPiOnlyPion100A.SetLineWidth(2)
+XSDataPion60A_EffCorr    .SetLineWidth(2)
+XSDataPion100A_EffCorr   .SetLineWidth(2)
+XSDataPion60A_EffCorr    .SetLineColor(kGray+1)
+XSDataPion100A_EffCorr   .SetLineColor(kRed)
+
+legend = TLegend(.44,.70,.84,.89)
+legend.AddEntry(XSMCTrueGenPiOnlyPion60A ,"Gen Data  60A  Tot XS")
+legend.AddEntry(XSMCTrueGenPiOnlyPion100A,"Gen Data 100A  Tot XS")
+legend.AddEntry(XSDataPion60A_EffCorr ,"Eff Corr Reco Data   60A Tot XS")
+legend.AddEntry(XSDataPion100A_EffCorr,"Eff Corr Reco Data  100A Tot XS")
+legend.Draw("same")
+c6.Update()
+'''
+
+############################# Apply Efficiency Correction on Data ##########################
+c6=TCanvas("c6" ,"DataTrueGenPiOnly" ,200 ,10 ,500 ,500) #make nice
+c6.SetGrid ()
+
+bkgCorr60A_File  = TFile.Open("Out_1.0Muons_1.0Electrons_60A.root")
+bkgCorr100A_File = TFile.Open("Out_1.0Muons_1.0Electrons_100A.root")
+bkgCorr60A_Int   = bkgCorr60A_File  .Get("backgroundCorrection_Int60A")
+bkgCorr60A_Inc   = bkgCorr60A_File  .Get("backgroundCorrection_Inc60A")
+bkgCorr100A_Int  = bkgCorr100A_File .Get("backgroundCorrection_Int100A")
+bkgCorr100A_Inc  = bkgCorr100A_File .Get("backgroundCorrection_Inc100A")
+
+
+XSMCTrueGenPiOnlyPion60A.GetXaxis().SetRangeUser(0,1000)
+XSMCTrueGenPiOnlyPion60A.GetYaxis().SetRangeUser(0,2.0)
+XSMCTrueGenPiOnlyPion60A.Draw("histo][")
+XSMCTrueGenPiOnlyPion100A.Draw("histosame][")
+
+Data60A_Int_EffCorr  = data60A_Int .Clone("Data60A_Int_EffCorr")
+Data60A_Inc_EffCorr  = data60A_Inc .Clone("Data60A_Inc_EffCorr")
+Data100A_Int_EffCorr = data100A_Int.Clone("Data100A_Int_EffCorr")
+Data100A_Inc_EffCorr = data100A_Inc.Clone("Data100A_Inc_EffCorr")
+
+Data60A_Int_EffCorr .Multiply(effCorr_Int_60A)
+Data60A_Inc_EffCorr .Multiply(effCorr_Inc_60A)
+Data100A_Int_EffCorr.Multiply(effCorr_Int_100A)
+Data100A_Inc_EffCorr.Multiply(effCorr_Inc_100A)
+
+#Data60A_Int_EffCorr .Multiply(bkgCorr60A_Int)
+#Data60A_Inc_EffCorr .Multiply(bkgCorr60A_Inc)
+#Data100A_Int_EffCorr.Multiply(bkgCorr100A_Int)
+#Data100A_Inc_EffCorr.Multiply(bkgCorr100A_Inc)
+
+
+XSDataPion60A_EffCorr  = calculateXSPlot(Data60A_Int_EffCorr , Data60A_Inc_EffCorr  , "XSDataPion60A_EffCorr")
+XSDataPion100A_EffCorr = calculateXSPlot(Data100A_Int_EffCorr, Data100A_Inc_EffCorr , "XSDataPion100A_EffCorr")
+
+XSDataPion60A_EffCorr.Draw("pesame")
+XSDataPion100A_EffCorr.Draw("pesame")
+
+XSMCTrueGenPiOnlyPion60A .SetLineWidth(2)
+XSMCTrueGenPiOnlyPion100A.SetLineWidth(2)
+XSDataPion60A_EffCorr    .SetLineWidth(2)
+XSDataPion100A_EffCorr   .SetLineWidth(2)
+XSDataPion60A_EffCorr    .SetLineColor(kGray+2)
+XSDataPion100A_EffCorr   .SetLineColor(kRed)
+
+
+#for i in xrange(4):
+#    XSMCTrueGenPiOnlyPion60A.SetBinContent(i,0)
+#    XSMCTrueGenPiOnlyPion60A.SetBinError(i,0)
+#    XSDataPion60A_EffCorr.SetBinContent(i,0)
+#    XSDataPion60A_EffCorr.SetBinError(i,0)
+
+#for i in xrange(13,30):
+#    XSMCTrueGenPiOnlyPion60A.SetBinContent(i,0)
+#    XSMCTrueGenPiOnlyPion60A.SetBinError(i,0)
+#    XSDataPion60A_EffCorr.SetBinContent(i,0)
+#    XSDataPion60A_EffCorr.SetBinError(i,0)
+
+#for i in xrange(7):
+#    XSMCTrueGenPiOnlyPion100A.SetBinContent(i,0)
+#    XSMCTrueGenPiOnlyPion100A.SetBinError(i,0)
+#    XSDataPion100A_EffCorr.SetBinContent(i,0)
+#    XSDataPion100A_EffCorr.SetBinError(i,0)
+#
+#for i in xrange(12):
+#    XSMCTrueGenPiOnlyPion100A.SetBinContent(i,0)
+#    XSMCTrueGenPiOnlyPion100A.SetBinError(i,0)
+#
+
+#for i in xrange(20,40):
+#    XSDataPion100A_EffCorr.SetBinContent(i,0)
+#    XSDataPion100A_EffCorr.SetBinError(i,0)
+#    XSMCTrueGenPiOnlyPion100A.SetBinContent(i,0)
+#    XSMCTrueGenPiOnlyPion100A.SetBinError(i,0)
+
+legend = TLegend(.44,.70,.84,.89)
+legend.AddEntry(XSMCTrueGenPiOnlyPion60A ,"Gen Data  Tot XS")
+legend.AddEntry(XSDataPion60A_EffCorr ,"Eff Corr Reco Data   60A Tot XS")
+legend.AddEntry(XSDataPion100A_EffCorr,"Eff Corr Reco Data  100A Tot XS")
+legend.Draw("same")
+c6.Update()
+
+
+outFile = TFile("EffCorrectionMC.root","recreate")
+outFile.cd()
+
+effCorr_Int_60A  .Write() 
+effCorr_Inc_60A  .Write() 
+effCorr_Int_100A .Write() 
+effCorr_Inc_100A .Write() 
+
+outFile.Write()
+outFile.Close()
+
+
+raw_input()  
+
+
+

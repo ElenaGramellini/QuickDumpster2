@@ -1,0 +1,149 @@
+from ROOT import *
+import os
+import math
+import argparse
+
+from ROOT import TEfficiency
+from ROOT import gStyle , TCanvas , TGraphErrors
+from array import array
+
+def calculateXSPlot(InteractingHisto, IncidentHisto, Name  ):
+    XS =  InteractingHisto.Clone(Name)
+    XS.Scale(101.10968)
+    XS.Divide(IncidentHisto)
+    return XS
+
+
+
+gStyle.SetOptStat(0)
+
+correction_File   = TFile.Open("EffCorrectionCheck.root")
+XSTrue60A           = correction_File.Get("XSTrue60A")
+XSTrue100A          = correction_File.Get("XSTrue100A")
+Efficiency_Int_60A  = correction_File.Get("Efficiency_Int_60A")
+Efficiency_Inc_60A  = correction_File.Get("Efficiency_Inc_60A")
+Efficiency_Int_100A = correction_File.Get("Efficiency_Int_100A")
+Efficiency_Inc_100A = correction_File.Get("Efficiency_Inc_100A")
+
+
+################################################ MC
+pionMC_RecoMC60A  = TFile.Open("/Volumes/Seagate/Elena/TPC/XSMCPionWithSecondaries60A_histo.root")
+pionMC_RecoMC100A = TFile.Open("/Volumes/Seagate/Elena/TPC/MC100A_Pions.root")
+
+intRecoMC60A      = pionMC_RecoMC60A.Get ("RecoXSPionOnly/hRecoInteractingKE")
+incRecoMC60A      = pionMC_RecoMC60A.Get ("RecoXSPionOnly/hRecoIncidentKE")
+intRecoMC100A     = pionMC_RecoMC100A.Get("RecoXSPionOnly/hRecoInteractingKE")
+incRecoMC100A     = pionMC_RecoMC100A.Get("RecoXSPionOnly/hRecoIncidentKE")
+
+intRecoMC60A_Eff  = intRecoMC60A  .Clone ("intRecoMC60A_Eff") 
+incRecoMC60A_Eff  = incRecoMC60A  .Clone ("incRecoMC60A_Eff") 
+intRecoMC100A_Eff = intRecoMC100A .Clone("intRecoMC100A_Eff")
+incRecoMC100A_Eff = incRecoMC100A .Clone("incRecoMC100A_Eff") 
+
+
+intRecoMC60A_Eff .Divide(Efficiency_Int_60A)
+incRecoMC60A_Eff .Divide(Efficiency_Inc_60A)
+intRecoMC100A_Eff.Divide(Efficiency_Int_100A)
+incRecoMC100A_Eff.Divide(Efficiency_Inc_100A)
+
+XSRecoMC60A_Eff  = calculateXSPlot(intRecoMC60A_Eff , incRecoMC60A_Eff , "XSRecoMC60A_Eff")
+XSRecoMC100A_Eff = calculateXSPlot(intRecoMC100A_Eff, incRecoMC100A_Eff, "XSRecoMC100A_Eff")
+
+
+## MC Reco
+
+c1=TCanvas("c1" ,"ClosureReco" ,200 ,10 ,500 ,500) #make nice
+c1.SetGrid ()
+XSTrue60A.SetTitle("Closure Test: Eff Corrected MC Reco on Truth; Kinetic Energy [MeV]; Cross Section")
+XSTrue60A.Draw("")
+XSTrue100A.Draw("same")
+XSTrue60A.GetXaxis().SetRangeUser(0,1200)
+XSTrue60A.GetYaxis().SetRangeUser(0,2.0)
+XSRecoMC60A_Eff.Draw("same")
+XSRecoMC100A_Eff.Draw("same")
+#Efficiency_Int_60A.Draw("")
+c1.Update()
+
+
+
+################################################ Data
+pionData_RecoData60A  = TFile.Open("/Volumes/Seagate/Elena/TPC/Data60A.root")
+pionData_RecoData100A = TFile.Open("/Volumes/Seagate/Elena/TPC/Data100A.root")
+
+intRecoData60A      = pionData_RecoData60A.Get ("RecoXS/hRecoInteractingKE")
+incRecoData60A      = pionData_RecoData60A.Get ("RecoXS/hRecoIncidentKE")
+intRecoData100A     = pionData_RecoData100A.Get("RecoXS/hRecoInteractingKE")
+incRecoData100A     = pionData_RecoData100A.Get("RecoXS/hRecoIncidentKE")
+
+intRecoData100A.SetLineColor(kRed)
+incRecoData100A.SetLineColor(kRed)
+
+intRecoData60A_Eff  = intRecoData60A  .Clone ("intRecoData60A_Eff") 
+incRecoData60A_Eff  = incRecoData60A  .Clone ("incRecoData60A_Eff") 
+intRecoData100A_Eff = intRecoData100A .Clone("intRecoData100A_Eff")
+incRecoData100A_Eff = incRecoData100A .Clone("incRecoData100A_Eff") 
+
+
+#intRecoData60A_Eff .Divide(Efficiency_Int_60A)
+#incRecoData60A_Eff .Divide(Efficiency_Inc_60A)
+#intRecoData100A_Eff.Divide(Efficiency_Int_100A)
+#incRecoData100A_Eff.Divide(Efficiency_Inc_100A)
+
+XSRecoData60A_Eff  = calculateXSPlot(intRecoData60A_Eff , incRecoData60A_Eff , "XSRecoData60A_Eff")
+XSRecoData100A_Eff = calculateXSPlot(intRecoData100A_Eff, incRecoData100A_Eff, "XSRecoData100A_Eff")
+
+XSRecoData60A  = calculateXSPlot(intRecoData60A , incRecoData60A , "XSRecoData60A")
+XSRecoData100A = calculateXSPlot(intRecoData100A, incRecoData100A, "XSRecoData100A")
+
+## Data Reco
+
+c2=TCanvas("c2" ,"Data" ,200 ,10 ,500 ,500) #make nice
+c2.SetGrid ()
+XSTrue60AC = XSTrue60A.Clone("XSTrue60AC")
+XSTrue60AC.SetTitle("Eff Corrected Data Reco on Truth; Kinetic Energy [MeV]; Cross Section")
+XSTrue60AC.Draw("")
+XSTrue100A.Draw("same")
+XSTrue60A.GetXaxis().SetRangeUser(0,1200)
+XSTrue60A.GetYaxis().SetRangeUser(0,2.0)
+XSRecoData60A_Eff.Draw("same")
+XSRecoData100A_Eff.Draw("same")
+#Efficiency_Int_60A.Draw("")
+c2.Update()
+
+'''
+interactingPlotString = "RecoXS/hRecoInteractingKE"
+incidentPlotString = "RecoXS/hRecoIncidentKE"
+data_Int    = data_File.Get(interactingPlotString)
+data_Inc    = data_File.Get(incidentPlotString)
+
+data_FileName = "/Volumes/Seagate/Elena/TPC/Data60A.root"
+data_FileName = "/Volumes/Seagate/Elena/TPC/Data60A.root"
+XSDataRecoPion = data_Int.Clone("pionXS_Data")
+XSDataRecoPion.Sumw2()
+data_Inc.Sumw2()
+XSDataRecoPion.Scale(101.10968)
+XSDataRecoPion.Divide(data_Inc)
+XSDataRecoPion.SetLineColor(kBlack)
+XSDataRecoPion.SetLineWidth(2)
+XSDataRecoPion.SetFillColor(0)
+
+c1=TCanvas("c1" ,"Data" ,200 ,10 ,500 ,500) #make nice
+c1.SetGrid ()
+XSDataRecoPion.Draw("pe")
+
+legend = TLegend(.44,.70,.84,.89)
+legend.AddEntry(XSDataRecoPion,"Raw Data Tot XS")
+legend.Draw("same")
+c1.Update()
+
+
+
+outFile = TFile("DataRaw.root","recreate")
+outFile.cd()
+XSDataRecoPion.Write() 
+
+outFile.Write()
+outFile.Close()
+'''
+
+raw_input()  

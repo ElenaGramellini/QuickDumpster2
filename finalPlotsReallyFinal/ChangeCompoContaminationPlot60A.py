@@ -6,33 +6,30 @@ import argparse
 
 # Get BeamComposition: percentage of pions, muons and electrons in a 60A beam configuration
 #                       The beam at 60A is 
-#pionInBeam60A = 0.642  # 68.8% pions
-#muonInBeam60A = 0.092  #  4.6% muons
-#elecInBeam60A = 0.266  # 26.6% electrons
+#pionInBeam60A = 0.688  # 68.8% pions
+muonInBeam60A = 0.046  #  4.6% muons 9.2
+elecInBeam60A = 0.264  # 26.4% electrons
 
-
-pionInBeam60A = 0.688  # 68.8% pions
-muonInBeam60A = 0.046  #  4.6% muons
-elecInBeam60A = 0.266  # 26.6% electrons
-
-
+changeMuon = 0.
+changeElectron = 1.
+muonInBeam60A = changeMuon*muonInBeam60A
+elecInBeam60A = changeElectron*elecInBeam60A
+pionInBeam60A = 1. - elecInBeam60A - muonInBeam60A
 # Electron to Pion and Muon to Pion Ratio
 elecScale = elecInBeam60A/pionInBeam60A
 muonScale = muonInBeam60A/pionInBeam60A
 
-pionMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Pions.root"
-muonMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Muon.root"
-elecMC_FileName = "/Volumes/Seagate/Elena/TPC/MC60A_Electron.root"
-
+pionMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoPionMC_60A.root"
+muonMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoMuonMC_60A.root"
+elecMC_FileName = "/Volumes/Seagate/Elena/MCContamination/RecoElectronMC_60A.root"
 
 
 # Get Monte Carlo files
 interactingPlotString = "RecoXS/hRecoInteractingKE"
 incidentPlotString    = "RecoXS/hRecoIncidentKE"
-pionMC_File   = TFile.Open(pionMC_FileName)
-muonMC_File   = TFile.Open(muonMC_FileName)
-elecMC_File   = TFile.Open(elecMC_FileName)
-
+pionMC_File  = TFile.Open(pionMC_FileName)
+muonMC_File  = TFile.Open(muonMC_FileName)
+elecMC_File  = TFile.Open(elecMC_FileName)
 
 
 # Get Interacting and Incident plots
@@ -42,9 +39,6 @@ elecMC_Int  = elecMC_File.Get(interactingPlotString)
 pionMC_Inc  = pionMC_File.Get(incidentPlotString)
 muonMC_Inc  = muonMC_File.Get(incidentPlotString)
 elecMC_Inc  = elecMC_File.Get(incidentPlotString)
-
-
-
 
 # Let's assign a color scheme --> check color scheme is the same as G4Beamline
 pionMC_Int.SetFillColor(9)
@@ -65,8 +59,6 @@ elecMC_Int.Scale(elecScale)
 elecMC_Inc.Scale(elecScale)
 muonMC_Int.Scale(muonScale)
 muonMC_Inc.Scale(muonScale)
-
- 
 
 
 # Form staggered plots for incident
@@ -89,73 +81,6 @@ for i in xrange(pionMC_Int.GetSize()):
     totHisto_Inc.SetBinContent(i, muonMC_Inc.GetBinContent(i)+elecMC_Inc.GetBinContent(i)+ pionMC_Inc.GetBinContent(i))
 
 
-#PionMuE Cross Section
-cRecoPiMuEXS = TCanvas("cRecoPiMuEXS" ,"#pi/#mu/e Reconstructed Cross Section" ,200 ,10 ,900 ,900)
-cRecoPiMuEXS.Divide(2,2) 
-PiMuEXS = totHisto_Int.Clone("MC_PiMuERecoXS")
-PiMuEXS.Sumw2()
-PiMuEXS.Divide(totHisto_Inc)
-PiMuEXS.Scale(101.10968) 
-PiMuEXS.SetTitle("#pi/#mu/e MC Reconstructed Cross Section; K.E. [MeV]; Total Hadronic Cross Section per 50 MeV [barn]")
-PiMuEXS.Draw("pe")
-
-#PionOnly Cross Section
-cRecoPionOnlyXS = TCanvas("cRecoPionOnlyXS" ,"#pi/#mu/e Reconstructed Cross Section" ,200 ,10 ,900 ,900)
-cRecoPionOnlyXS.Divide(2,2) 
-PionOnlyXS = pionMC_Int.Clone("MC_PionOnlyRecoXS")
-PionOnlyXS.Sumw2()
-PionOnlyXS.Divide(pionMC_Inc)
-PionOnlyXS.Scale(101.10968) 
-PionOnlyXS.SetTitle("#pi MC Reconstructed Cross Section; K.E. [MeV]; Total Hadronic Cross Section per 50 MeV [barn]")
-PionOnlyXS.Draw("pe")
-
-
-#PionContent
-cPion60A = TCanvas("cPion60A" ,"Plots Overlay" ,200 ,10 ,900 ,900)
-cPion60A.Divide(2,2) 
-p1 = cPion60A.cd(1)
-p1.SetGrid()
-pionContent_Int = pionMC_Int.Clone("pionContent_Int")
-pionContent_Int.Sumw2()
-pionContent_Int.Divide(totHisto_Int)
-pionContent_Int.Draw("")
-p2 = cPion60A.cd(2)
-p2.SetGrid()
-pionContent_Inc = pionMC_Inc.Clone("pionContent_Inc")
-pionContent_Inc.Sumw2()
-pionContent_Inc.Divide(totHisto_Inc)
-pionContent_Inc.Draw("")
-cPion60A.SetGrid()
-cPion60A.Update()
-
-
-##Plot Staggered plots
-p3 = cPion60A.cd(3)
-p3.SetGrid()
-interactingStack60A.Draw("histo")
-legend.Draw("same")
-p4 = cPion60A.cd(4)
-p4.SetGrid()
-incidentStack60A.Draw("histo")
-legend.Draw("same")
-cPion60A.Update()
-
-outFile = TFile("BackGroundCorrectionPions60A.root","recreate")
-outFile.cd()
-pionContent_Int.Write("backgroundCorrection_Int",TObject.kWriteDelete)
-pionContent_Inc.Write("backgroundCorrection_Inc",TObject.kWriteDelete)
-PiMuEXS.Write()
-PionOnlyXS.Write()
-outFile.Write()
-outFile.Close()
-
-raw_input()  
-
-
-
-
-
-'''
 #Plot Overlaid plots
 c60 = TCanvas("c60" ,"Plots Overlay" ,200 ,10 ,1200 ,600)
 c60.Divide(2,1) 
@@ -169,6 +94,20 @@ elecMC_Inc.Draw("samehisto")
 muonMC_Inc.Draw("samehisto")
 c60.SetGrid()
 c60.Update()
+
+
+#Plot Staggered plots
+c60EC = TCanvas("c60S" ,"Electron Content" ,200 ,10 ,1200 ,600)
+c60EC.Divide(2,1) 
+p1 = c60EC.cd(1)
+p1.SetGrid()
+interactingStack60A.Draw("histo")
+legend.Draw("same")
+p2 = c60EC.cd(2)
+p2.SetGrid()
+incidentStack60A.Draw("histo")
+legend.Draw("same")
+c60EC.Update()
 
 
 # Understand the electron contribution to the interacting and incident plots
@@ -307,17 +246,12 @@ XSMstack.GetYaxis().SetRangeUser(0.5,1.5)
 XSMstack.GetXaxis().SetRangeUser(0.,1000)
 XSMstack.Draw("pe")
 c60XSM.Update()
-'''
 
-## Final Plots I want out:
-# backgroundCorrection_Int
-# backgroundCorrection_Inc
-# 
-#fileName = "OutEl"+str(muonInBeam60A)+".root"
-#fileOut = TFile(fileName,"recreate")
-#fileOut.Add(XSMstack)
-#fileOut.Write()
-#fileOut.Close()
+fileName = "Out_"+str(changeMuon)+"Muons_"+str(changeElectron)+"Electrons.root"
+fileOut = TFile(fileName,"recreate")
+fileOut.Add(XSMstack)
+fileOut.Write()
+fileOut.Close()
 raw_input()  
 
 
