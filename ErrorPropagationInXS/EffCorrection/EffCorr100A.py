@@ -4,13 +4,13 @@ import numpy as np
 import argparse
 import os
 
-outFileName = "Eff_Correction_60A.root"
+outFileName = "Eff_Correction_100A.root"
 
 ########################################################################
 ########################    MC Part   ##################################
 ########################################################################
 # Get Monte Carlo files
-pionMC_FileName = "/Volumes/Seagate/Elena/TPC/XSMCPionWithSecondaries60A_histo.root"
+pionMC_FileName = "/Volumes/Seagate/Elena/TPC/MC100A_Pions.root"
 pionMC_File   = TFile.Open(pionMC_FileName)
 # Get Interacting and Incident plot
 pionMC_Int  = pionMC_File.Get("RecoXSPionOnly/hRecoInteractingKE")
@@ -18,13 +18,13 @@ pionMC_Inc  = pionMC_File.Get("RecoXSPionOnly/hRecoIncidentKE")
 
 
 # Get Truth
-pionTrue_45_FileName = "/Volumes/Seagate/Elena/TPC/AngleCut_0.08334_histo_60A.root"
+pionTrue_45_FileName = "/Volumes/Seagate/Elena/TPC/AngleCut_0.08334_new_histo.root"
 pionTrue_45 = TFile.Open(pionTrue_45_FileName)
-pionTrue_45_Int  = pionTrue_45.Get("AngleCutTrueXS/hInteractingKE")
-pionTrue_45_Inc  = pionTrue_45.Get("AngleCutTrueXS/hIncidentKE")
+pionTrue_45_Int  = pionTrue_45.Get("AngleCutTrueXS083/hInteractingKE")
+pionTrue_45_Inc  = pionTrue_45.Get("AngleCutTrueXS083/hIncidentKE")
 
 
-pionTrue_All_FileName = "/Volumes/Seagate/Elena/TPC/TruePionGen60A.root"
+pionTrue_All_FileName = "/Volumes/Seagate/Elena/TPC/AngleCut_100A_histo.root"
 pionTrue_All = TFile.Open(pionTrue_All_FileName)
 pionTrue_All_Int  = pionTrue_All.Get("TrueXS/hInteractingKE")
 pionTrue_All_Inc  = pionTrue_All.Get("TrueXS/hIncidentKE")
@@ -32,17 +32,17 @@ pionTrue_All_Inc  = pionTrue_All.Get("TrueXS/hIncidentKE")
 
 ###############################################################################
 
-eff_Corr_45_Int = pionMC_Int.Clone("eff_Corr_45_Int_60A")
+eff_Corr_45_Int = pionMC_Int.Clone("eff_Corr_45_Int_100A")
 eff_Corr_45_Int.Sumw2()
 pionTrue_45_Int.Sumw2()
 eff_Corr_45_Int.Divide(pionTrue_45_Int)   
 
-eff_Corr_45_Inc = pionMC_Inc.Clone("eff_Corr_45_Inc_60A")
+eff_Corr_45_Inc = pionMC_Inc.Clone("eff_Corr_45_Inc_100A")
 eff_Corr_45_Inc.Sumw2()
 pionTrue_45_Inc.Sumw2()
 eff_Corr_45_Inc.Divide(pionTrue_45_Inc)   
 
-moveXS_45 = eff_Corr_45_Inc.Clone("move_XS_45_60A")
+moveXS_45 = eff_Corr_45_Inc.Clone("move_XS_45_100A")
 moveXS_45.Divide(eff_Corr_45_Int)   
 
 eff_Corr_45_Int .SetFillColor(kWhite) 
@@ -56,17 +56,17 @@ moveXS_45       .SetLineColor(kRed)
 ###############################################################################
 
 
-eff_Corr_All_Int = pionMC_Int.Clone("eff_Corr_All_Int_60A")
+eff_Corr_All_Int = pionMC_Int.Clone("eff_Corr_All_Int_100A")
 eff_Corr_All_Int.Sumw2()
 pionTrue_All_Int.Sumw2()
 eff_Corr_All_Int.Divide(pionTrue_All_Int)   
 
-eff_Corr_All_Inc = pionMC_Inc.Clone("eff_Corr_All_Inc_60A")
+eff_Corr_All_Inc = pionMC_Inc.Clone("eff_Corr_All_Inc_100A")
 eff_Corr_All_Inc.Sumw2()
 pionTrue_All_Inc.Sumw2()
 eff_Corr_All_Inc.Divide(pionTrue_All_Inc)   
 
-moveXS_All = eff_Corr_All_Inc.Clone("move_XS_All_60A")
+moveXS_All = eff_Corr_All_Inc.Clone("move_XS_All_100A")
 moveXS_All.Divide(eff_Corr_All_Int)   
 
 eff_Corr_All_Int .SetFillColor(kWhite) 
