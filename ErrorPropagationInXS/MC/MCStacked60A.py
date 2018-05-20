@@ -143,6 +143,11 @@ xsMC = totHisto_Int.Clone("xsMC")
 xsMC.Scale(101.10968)
 xsMC.Divide(totHisto_Inc)   
 
+
+xsPiOnly = pionMC_Int.Clone("xsPiOnly")
+xsPiOnly.Scale(101.10968)
+xsPiOnly.Divide(pionMC_Inc)   
+
 ## Check Staggered Plots Make Sense
 c0 = TCanvas("c0","c0",1200,600)
 c0.Divide(2,1)
@@ -232,6 +237,7 @@ muonMC_IntC.Write("muonMC_Int60A",TObject.kWriteDelete)
 muonMC_IncC.Write("muonMC_Inc60A",TObject.kWriteDelete)
 
 xsMC.Write("XS_60A",TObject.kWriteDelete)
+xsPiOnly.Write("XS_60APiOnly",TObject.kWriteDelete)
 interactingStack60AC.Write("interactingStack60A",TObject.kWriteDelete)
 incidentStack60AC   .Write("incidentStack60A"   ,TObject.kWriteDelete)
 

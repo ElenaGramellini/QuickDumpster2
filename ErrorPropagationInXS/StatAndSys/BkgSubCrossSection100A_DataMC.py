@@ -5,41 +5,26 @@ from array import array
 
 gStyle.SetOptStat(0)
 
-#MCName = "/Users/elenag/Desktop/BeamLineCompoForPion/MCCorrection/ErrorPropagationInXS/MC/MC_Staggered_Data100A.root"
-#MCFile = root.TFile(MCName)
-#MC_Int = MCFile.Get("interactingStack100A")
-#MC_Inc = MCFile.Get("incidentStack100A"   )
-#MC_XS  = MCFile.Get("XS_100A")
+MCName = "/Users/elenag/Desktop/BeamLineCompoForPion/MCCorrection/ErrorPropagationInXS/MC/MC_Staggered_Data100A.root"
+MCFile = root.TFile(MCName)
+XS_100APiOnly  = MCFile.Get("XS_100APiOnly")
+XS_100APiOnly.SetFillColor(kWhite)
+XS_100APiOnly.SetLineColor(kAzure)
 
-#MC_XS.SetBinContent(1,0)
-#MC_XS.SetBinContent(2,0)
-#MC_XS.SetBinContent(3,0)
-#MC_XS.SetBinContent(4,0)
-#MC_XS.SetBinContent(5,0)
-#MC_XS.SetBinContent(6,0)
-#MC_XS.SetBinContent(24,0)
-#MC_XS.SetBinContent(25,0)
-#MC_XS.SetBinContent(26,0)
-#MC_XS.SetBinError(1,0)
-#MC_XS.SetBinError(2,0)
-#MC_XS.SetBinError(3,0)
-#MC_XS.SetBinError(4,0)
-#MC_XS.SetBinError(5,0)
-#MC_XS.SetBinError(6,0)
-#MC_XS.SetBinError(24,0)
-#MC_XS.SetBinError(25,0)
-#MC_XS.SetBinError(26,0)
-
-#pionMC_Int = MCFile.Get("pionMC_Int100A")
-#secoMC_Int = MCFile.Get("secoMC_Int100A")
-#muonMC_Int = MCFile.Get("muonMC_Int100A")
-#elecMC_Int = MCFile.Get("elecMC_Int100A")
-
-#pionMC_Int.SetFillColor(9)
-#secoMC_Int.SetFillColor(kRed-2)
-#muonMC_Int.SetFillColor(41)
-#elecMC_Int.SetFillColor(40)    
-#MC_XS.SetFillColor(kWhite)
+XS_100APiOnly.SetBinContent(1,0)
+XS_100APiOnly.SetBinContent(2,0)
+XS_100APiOnly.SetBinContent(3,0)
+#XS_100APiOnly.SetBinContent(4,0)
+XS_100APiOnly.SetBinContent(23,0)
+XS_100APiOnly.SetBinContent(24,0)
+XS_100APiOnly.SetBinContent(25,0)
+XS_100APiOnly.SetBinError(1,0)
+XS_100APiOnly.SetBinError(2,0)
+XS_100APiOnly.SetBinError(3,0)
+#XS_100APiOnly.SetBinError(4,0)
+XS_100APiOnly.SetBinError(23,0)
+XS_100APiOnly.SetBinError(24,0)
+XS_100APiOnly.SetBinError(25,0)
 
 inFileName          = "../StatOnly/XSRaw_StatOnlyUnc_Data100A.root"
 f                   = root.TFile(inFileName)
@@ -59,7 +44,12 @@ XS_BkgSub             = fBkg.Get("XS_BkgSub100A")
 XS_BkgMax             = fBkg.Get("XS_BkgSub_Max100A")
 XS_BkgMin             = fBkg.Get("XS_BkgSub_Min100A")
 
+XS_BkgSub.SetBinContent(3,-100)
+XS_BkgSub.SetBinError(3,0)
 
+for i in xrange(23,30):
+    XS_BkgSub.SetBinContent(i,-100)
+    XS_BkgSub.SetBinError(i,0)
 
 noRootFileName = "Plots100A_BkgSub"
 #####################################################################
@@ -125,14 +115,16 @@ cXS.SetGrid()
 grXS.GetXaxis().SetRangeUser(0,1200.)
 grXS.GetYaxis().SetRangeUser(0,4.)
 grXS.Draw("AP")
+XS_100APiOnly.Draw("histosame][")
 #MC_XS.Draw("histosame][")
 grXS.Draw("P")
 XS_Stat.Draw("e0same")
 lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
 #lariatHead.DrawLatex(0.13,0.84,"same"); 
-legendXS = TLegend(.54,.65,.90,.90)
+legendXS = TLegend(.44,.65,.90,.90)
 legendXS.AddEntry(XS_Stat,"Raw -100A Data Stat Only");
 legendXS.AddEntry(grXS,   "Raw -100A Data Stat and Sys");
+legendXS.AddEntry(XS_100APiOnly,  "MC Reco -100A #pi Only");
 #legendXS.AddEntry(MC_XS,  "MC Reco -100A #pi/#mu/e");
 
 legendXS.Draw("same")
