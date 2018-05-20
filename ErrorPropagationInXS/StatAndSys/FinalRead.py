@@ -6,6 +6,56 @@ from array import array
 gStyle.SetOptStat(0)
 
 
+def is_number(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+fnameTxT   = "/Users/elenag/Desktop/LArIATTrueCrossSec/PionMinusG4.txt"
+
+kineticEnergy = []
+crossSec      = []
+zero          = []
+
+
+title = ""
+with open(fnameTxT) as f:
+    for fLine in f.readlines():
+        w = fLine.split()
+        if is_number(w[0]):
+            runIn    = int(w[0])
+            ke       = float(w[1])
+            xstot       = float(w[4])
+            kineticEnergy.append(ke)
+            crossSec.append(xstot)
+            zero.append(0.)
+        else:
+            if "for" not in fLine: 
+                continue
+            title =  fLine[9:]
+
+g4x      = array('f', kineticEnergy )
+g4y      = array('f', crossSec)
+g4exl    = array('f', zero)
+g4exr    = array('f', zero)
+
+
+nPoints=len(g4x)
+gr      = TGraphErrors ( nPoints , g4x , g4y     , g4exl, g4exr )
+gr.SetTitle(title+"; Kinetic Energy [MeV]; Cross Section [barn]")
+gr . GetXaxis().SetRangeUser(0,1000)
+gr . GetYaxis().SetRangeUser(0,2.)
+gr . SetLineWidth(2) ;
+gr . SetLineColor(kGreen-2) ;
+gr . SetFillColor(0)
+
+#gr . Draw ( "APL" ) ;
+
+
+
+
 MCFile60A  = root.TFile("Final60A.root")
 stat60A = MCFile60A.Get("XS60A_StatOnly")
 sys60A  = MCFile60A.Get("grXS60A")
@@ -24,15 +74,24 @@ sys60A.Draw("AP")
 stat60A.Draw("e0same")
 sys100A.Draw("P")
 stat100A.Draw("e0same")
+gr . Draw ( "PL" ) ;
 #lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
 #lariatHead.DrawLatex(0.13,0.84,"same"); 
 legendXS = TLegend(.54,.52,.84,.70);
+legendXS.AddEntry(gr,"G4 Prediction Tot XS")
 legendXS.AddEntry(stat60A ,"-60A Data Stat Only");
 legendXS.AddEntry(sys60A  ,"-60A Data Stat and Sys");
 legendXS.AddEntry(stat100A,"-100A Data Stat Only");
 legendXS.AddEntry(sys100A ,"-100A Data Stat and Sys");
 legendXS.Draw("same")
 cXS.Update()
+
+
+
+
+
+
+
 
 
 
