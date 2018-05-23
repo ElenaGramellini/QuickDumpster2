@@ -222,7 +222,7 @@ legendInt.AddEntry(MC_IntK, "MC  Kaons");
 legendInt.AddEntry(MC_IntS, "MC  Secondaries");
 legendInt.Draw("same")
 p1.Update()
-p1.SaveAs(noRootFileName+"_MCData_Int_StatSyst.pdf")
+p1.SaveAs(noRootFileName+"_MCData_Int_StatSystK.pdf")
 
 
 p2 = TCanvas("cHistos2","cHistos",600,600)
@@ -245,7 +245,7 @@ legendInc.AddEntry(MC_IncS, "MC  Secondaries");
 
 legendInc.Draw("same")
 p2.Update()
-p2.SaveAs(noRootFileName+"_MCData_Inc_StatSyst.pdf")
+p2.SaveAs(noRootFileName+"_MCData_Inc_StatSystK.pdf")
 
 cXS = TCanvas("cXS","cXS",600,600)
 cXS.SetGrid()
@@ -264,7 +264,7 @@ legendXS.AddEntry(MC_XS,  "MC Reco  K + Secondaries");
 
 legendXS.Draw("same")
 cXS.Update()
-cXS.SaveAs(noRootFileName+"_MCData_XS_StatSyst.pdf")
+cXS.SaveAs(noRootFileName+"_MCData_XS_StatSystK.pdf")
 
 #####################################################################
 #######################    Save to File   ###########################
