@@ -9,28 +9,53 @@ MCName = "/Volumes/Seagate/Elena/TPC/Kaons/MCKaon_Picky.root "
 MCFile = root.TFile(MCName)
 MC_Int = MCFile.Get("RecoXSAll/hRecoInteractingKE")
 MC_Inc = MCFile.Get("RecoXSAll/hRecoIncidentKE"   )
-  
+
+MC_IntK = MCFile.Get("RecoXSKaonOnly/hRecoInteractingKE")
+MC_IncK = MCFile.Get("RecoXSKaonOnly/hRecoIncidentKE"   )
+
+MC_IntS = MCFile.Get("RecoXSSec/hRecoInteractingKE")
+MC_IncS = MCFile.Get("RecoXSSec/hRecoIncidentKE"   )
+
+
+for i in xrange(5):
+    MC_Int .SetBinContent(i,0)
+    MC_Inc .SetBinContent(i,0)
+    MC_IntK.SetBinContent(i,0)
+    MC_IncK.SetBinContent(i,0)
+    MC_IntS.SetBinContent(i,0)
+    MC_IncS.SetBinContent(i,0)
+
+    MC_Int .SetBinError(i,0)
+    MC_Inc .SetBinError(i,0)
+    MC_IntK.SetBinError(i,0)
+    MC_IncK.SetBinError(i,0)
+    MC_IntS.SetBinError(i,0)
+    MC_IncS.SetBinError(i,0)
+
+for i in xrange(16,50):
+    MC_Int .SetBinContent(i,0)
+    MC_Inc .SetBinContent(i,0)
+    MC_IntK.SetBinContent(i,0)
+    MC_IncK.SetBinContent(i,0)
+    MC_IntS.SetBinContent(i,0)
+    MC_IncS.SetBinContent(i,0)
+
+    MC_Int .SetBinError(i,0)
+    MC_Inc .SetBinError(i,0)
+    MC_IntK.SetBinError(i,0)
+    MC_IncK.SetBinError(i,0)
+    MC_IntS.SetBinError(i,0)
+    MC_IncS.SetBinError(i,0)
+
+
 MC_XS  = MC_Int.Clone("XS_MC")
 MC_XS.Scale(101.)
 MC_XS.Divide(MC_Inc)
 MC_XS.Sumw2()
-
-
-#MC_XS.SetBinContent(1,0)
-#MC_XS.SetBinContent(2,0)
-#MC_XS.SetBinContent(3,0)
-#MC_XS.SetBinContent(4,0)
-#MC_XS.SetBinContent(15,0)
-#MC_XS.SetBinContent(16,0)
-#MC_XS.SetBinError(1,0)
-#MC_XS.SetBinError(2,0)
-#MC_XS.SetBinError(3,0)
-#MC_XS.SetBinError(4,0)
-#MC_XS.SetBinError(15,0)
-#MC_XS.SetBinError(16,0)
-
-
 MC_XS.SetFillColor(kWhite)
+
+
+
 
 
 inFileName          = "../StatOnly/XSRaw_StatOnlyUnc_KaonDataPicky.root"
@@ -67,7 +92,6 @@ dataInt_Int = 0
 dataInt_Inc = 0
 for i in xrange(hInteractingKE_Stat.GetSize()):
     if i > 3:
-        print hInteractingKE_Stat.GetBinContent(i)
         dataInt_Int += hInteractingKE_Stat.GetBinContent(i)
         dataInt_Inc += hIncidentKE_Stat.GetBinContent(i)
 
@@ -100,6 +124,8 @@ for i in xrange(hInteractingKE_Stat.GetSize()):
     exh .append(25.)
 
 
+        
+
 grInt = TGraphAsymmErrors(hInteractingKE_Stat.GetSize(),x,intErr_Central,exl,exh,intMinErr_StaSys,intMaxErr_StaSys);
 grInc = TGraphAsymmErrors(hInteractingKE_Stat.GetSize(),x,incErr_Central,exl,exh,incMinErr_StaSys,incMaxErr_StaSys);
 grXS  = TGraphAsymmErrors(hInteractingKE_Stat.GetSize(),x,XSErr_Central ,exl,exh,XSMinErr_StaSys ,XSMaxErr_StaSys);
@@ -123,8 +149,32 @@ lariatHead.SetTextSize(0.04);
 lariatHead.SetTextAlign(40);
 
 
+integral_Int = MC_Int.Integral()
+integral_Inc = MC_Inc.Integral()
 MC_Int.Scale(dataInt_Int/MC_Int.Integral())
 MC_Inc.Scale(dataInt_Inc/MC_Inc.Integral())
+
+MC_IntK.Scale(dataInt_Int/integral_Int)
+MC_IncK.Scale(dataInt_Inc/integral_Inc)
+MC_IntS.Scale(dataInt_Int/integral_Int)
+MC_IncS.Scale(dataInt_Inc/integral_Inc)
+
+
+interactingStack = THStack("interactingStack", "Interacting MC #pi/#mu/e; Interacting K.E. [MeV]; Entries per 50 MeV");
+interactingStack.Add(MC_IntS )
+interactingStack.Add(MC_IntK )
+MC_IntS.SetFillColor(kRed-2)
+MC_IntK.SetFillColor(kMagenta-8)
+MC_IntS.SetLineColor(kRed-2)
+MC_IntK.SetLineColor(kRed-8)
+
+incidentStack = THStack("incidentStack", "Incident MC #pi/#mu/e; Incident K.E. [MeV]; Entries per 50 MeV");
+incidentStack.Add(MC_IncS )
+incidentStack.Add(MC_IncK )
+MC_IncS.SetFillColor(kRed-2)
+MC_IncK.SetFillColor(kMagenta-8)
+MC_IncS.SetLineColor(kRed-2)
+MC_IncK.SetLineColor(kRed-8)
 
 
 hInteractingKE_Stat.SetFillColor(kWhite)
@@ -160,7 +210,7 @@ p1.SetLeftMargin(0.13)
 grInt.GetXaxis().SetRangeUser(0,1200.)
 grInt.GetYaxis().SetRangeUser(0,120.)
 grInt.Draw("AP")
-MC_Int.Draw("histosame")
+interactingStack.Draw("histosame")
 grInt.Draw("P")
 hInteractingKE_Stat.Draw("e0same")
 lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
@@ -168,7 +218,8 @@ lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
 legendInt = TLegend(.54,.55,.90,.90);
 legendInt.AddEntry(hInteractingKE_Stat,"Raw - Data Stat Only");
 legendInt.AddEntry(grInt,   "Raw  Data Stat and Sys");
-legendInt.AddEntry(MC_Int,"MC  Kaons");
+legendInt.AddEntry(MC_IntK, "MC  Kaons");
+legendInt.AddEntry(MC_IntS, "MC  Secondaries");
 legendInt.Draw("same")
 p1.Update()
 p1.SaveAs(noRootFileName+"_MCData_Int_StatSyst.pdf")
@@ -176,11 +227,11 @@ p1.SaveAs(noRootFileName+"_MCData_Int_StatSyst.pdf")
 
 p2 = TCanvas("cHistos2","cHistos",600,600)
 p2.SetGrid()
-p2.SetLeftMargin(0.13)
+p2.SetLeftMargin(0.15)
 grInc.GetXaxis().SetRangeUser(0,1200.)
 grInc.GetYaxis().SetRangeUser(0,25000.)
 grInc.Draw("AP")
-MC_Inc.Draw("histosame")
+incidentStack.Draw("histosame")
 grInc.Draw("P")
 hIncidentKE_Stat.Draw("e0same")
 lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
@@ -189,11 +240,12 @@ lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
 legendInc = TLegend(.54,.55,.90,.90);
 legendInc.AddEntry(hIncidentKE_Stat,"Raw  Data Stat Only");
 legendInc.AddEntry(grInc,   "Raw  Data Stat and Sys");
-legendInc.AddEntry(MC_Int,"MC Kaons");
+legendInc.AddEntry(MC_IncK, "MC  Kaons");
+legendInc.AddEntry(MC_IncS, "MC  Secondaries");
 
 legendInc.Draw("same")
 p2.Update()
-#p2.SaveAs(noRootFileName+"_MCData_Inc_StatSyst.pdf")
+p2.SaveAs(noRootFileName+"_MCData_Inc_StatSyst.pdf")
 
 cXS = TCanvas("cXS","cXS",600,600)
 cXS.SetGrid()
@@ -208,11 +260,11 @@ lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
 legendXS = TLegend(.54,.65,.90,.90)
 legendXS.AddEntry(XS_Stat,"Raw  Data Stat Only");
 legendXS.AddEntry(grXS,   "Raw  Data Stat and Sys");
-legendXS.AddEntry(MC_XS,  "MC Reco  #pi/#mu/e");
+legendXS.AddEntry(MC_XS,  "MC Reco  K + Secondaries");
 
 legendXS.Draw("same")
 cXS.Update()
-#cXS.SaveAs(noRootFileName+"_MCData_XS_StatSyst.pdf")
+cXS.SaveAs(noRootFileName+"_MCData_XS_StatSyst.pdf")
 
 #####################################################################
 #######################    Save to File   ###########################

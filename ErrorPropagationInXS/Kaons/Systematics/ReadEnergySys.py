@@ -33,6 +33,28 @@ hInteractingKEMin  = f.Get("hInteractingKEMin")
 hIncidentKEMin     = f.Get("hIncidentKEMin")
 XSMin              = f.Get("XSMin")
 
+for i in xrange(5):
+    hInteractingKE   .SetBinContent(i,0)
+    hIncidentKE      .SetBinContent(i,0)
+    XS               .SetBinContent(i,0)
+    hInteractingKEMax.SetBinContent(i,0)
+    hIncidentKEMax   .SetBinContent(i,0)
+    XSMax            .SetBinContent(i,0)
+    hInteractingKEMin.SetBinContent(i,0)
+    hIncidentKEMin   .SetBinContent(i,0)
+    XSMin            .SetBinContent(i,0)
+
+    hInteractingKE   .SetBinError(i,0)
+    hIncidentKE      .SetBinError(i,0)
+    XS               .SetBinError(i,0)
+    hInteractingKEMax.SetBinError(i,0)
+    hIncidentKEMax   .SetBinError(i,0)
+    XSMax            .SetBinError(i,0)
+    hInteractingKEMin.SetBinError(i,0)
+    hIncidentKEMin   .SetBinError(i,0)
+    XSMin            .SetBinError(i,0)
+
+
 ch = TCanvas("cHistos","cHistos",1800,600)
 ch.Divide(3,1)
 cp0 = ch.cd(1)
