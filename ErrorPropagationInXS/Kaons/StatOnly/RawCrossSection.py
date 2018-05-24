@@ -29,7 +29,7 @@ f = root.TFile(inFileName)
 hInteractingKE_In  = f.Get(hInteractingKE_Name)
 hIncidentKE_In     = f.Get(hIncidentKE_Name)
 
-for i in xrange(5):
+for i in xrange(4):
     hInteractingKE_In.SetBinContent(i,0)
     hIncidentKE_In   .SetBinContent(i,0)
     hInteractingKE_In.SetBinError(i,0)
