@@ -17,7 +17,7 @@ gStyle.SetOptStat(0)
 
 outFileName = "BkgSub_sec.root"
 
-kaonMC_FileName = "/Volumes/Seagate/Elena/TPC/Kaons/MCKaon_Picky.root"
+kaonMC_FileName = "/Volumes/Seagate/Elena/TPC/Kaons/MCKaons_WithDK.root"
 
 # Get Monte Carlo files
 interactingPlotString = "RecoXS/hRecoInteractingKE"

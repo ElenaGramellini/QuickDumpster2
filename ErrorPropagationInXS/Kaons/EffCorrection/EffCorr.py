@@ -10,17 +10,24 @@ outFileName = "Eff_Correction.root"
 ########################    MC Part   ##################################
 ########################################################################
 # Get Monte Carlo files
-kaonMC_FileName = "/Volumes/Seagate/Elena/TPC/Kaons/MCKaon_Picky.root"
+kaonMC_FileName = "/Volumes/Seagate/Elena/TPC/Kaons/MCKaons_WithDK.root"
 kaonMC_File   = TFile.Open(kaonMC_FileName)
 # Get Interacting and Incident plot
-kaonMC_Int  = kaonMC_File.Get("RecoXSKaonOnly/hRecoInteractingKE")
-kaonMC_Inc  = kaonMC_File.Get("RecoXSKaonOnly/hRecoIncidentKE")
+kaonMC_Int    = kaonMC_File.Get("RecoXSKaonOnly/hRecoInteractingKE")
+kaonMC_IntDK  = kaonMC_File.Get("RecoXSKaonOnly/hRecoInteractingKE_DK")
+kaonMC_Inc    = kaonMC_File.Get("RecoXSKaonOnly/hRecoIncidentKE")
+
+kaonMC_Int.Add(kaonMC_IntDK,-1)
 
 
-# Get Truth
-kaonTrue_45 = TFile.Open(kaonMC_FileName)
+# Get TruthMC
+kaonMC_FileNameTrue = "/Volumes/Seagate/Elena/TPC/Kaons/MCKaon_Picky.root"
+kaonTrue_45 = TFile.Open(kaonMC_FileNameTrue)
 kaonTrue_45_Int  = kaonTrue_45.Get("TrueXS08/hInteractingKE")
 kaonTrue_45_Inc  = kaonTrue_45.Get("TrueXS08/hIncidentKE")
+kaonTrue_45_XS = kaonTrue_45_Int.Clone("XS45Deg")
+kaonTrue_45_XS.Scale(101.)
+kaonTrue_45_XS.Divide(kaonTrue_45_Inc)
 
 kaonTrue_All = TFile.Open(kaonMC_FileName)
 kaonTrue_All_Int  = kaonTrue_All.Get("TrueXS/hInteractingKE")
@@ -117,6 +124,7 @@ moveXS_All       .Write()
 eff_Corr_45_Int .Write() 
 eff_Corr_45_Inc .Write() 
 moveXS_45       .Write() 
+kaonTrue_45_XS.Write()
 
 outFile.Write()
 outFile.Close()

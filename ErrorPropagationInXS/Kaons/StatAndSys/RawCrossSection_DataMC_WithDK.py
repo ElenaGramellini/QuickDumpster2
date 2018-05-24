@@ -5,7 +5,7 @@ from array import array
 
 gStyle.SetOptStat(0)
 
-MCName = "/Volumes/Seagate/Elena/TPC/reco_histo_20000.root"
+MCName = "/Volumes/Seagate/Elena/TPC/Kaons/MCKaons_WithDK.root"
 MCFile = root.TFile(MCName)
 MC_Int = MCFile.Get("RecoXSAll/hRecoInteractingKE")
 MC_Inc = MCFile.Get("RecoXSAll/hRecoIncidentKE"   )
@@ -17,6 +17,13 @@ MC_IncK = MCFile.Get("RecoXSKaonOnly/hRecoIncidentKE"   )
 
 MC_IntS = MCFile.Get("RecoXSSec/hRecoInteractingKE")
 MC_IncS = MCFile.Get("RecoXSSec/hRecoIncidentKE"   )
+
+MC_XS  = MC_Int.Clone("XS_MC")
+MC_XS.Scale(101.)
+MC_XS.Divide(MC_Inc)
+MC_XS.Sumw2()
+MC_XS.SetFillColor(kWhite)
+
 
 MC_IntK.Add(MC_IntDK,-1)
 
@@ -56,11 +63,6 @@ for i in xrange(16,50):
     MC_IncS.SetBinError(i,0)
 
 
-MC_XS  = MC_Int.Clone("XS_MC")
-MC_XS.Scale(101.)
-MC_XS.Divide(MC_Inc)
-MC_XS.Sumw2()
-MC_XS.SetFillColor(kWhite)
 
 
 

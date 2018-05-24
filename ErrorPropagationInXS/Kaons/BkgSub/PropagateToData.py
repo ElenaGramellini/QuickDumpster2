@@ -8,7 +8,7 @@ gStyle.SetOptStat(0)
 
 outFileName = "BkgSubWithBuoundaries.root"
 
-bkgFileName_1_1 = "BkgSub_sec.root"
+bkgFileName_1_1 = "BkgSub_sec_WithDK.root"
 bkgFile_1_1     = TFile.Open(bkgFileName_1_1)
 bkgC_XS__1_1 = bkgFile_1_1.Get("move_XS")
 

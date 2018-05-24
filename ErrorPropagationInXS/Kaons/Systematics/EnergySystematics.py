@@ -11,7 +11,7 @@ def calculateXSPlot(InteractingHisto, IncidentHisto, Name  ):
     XS.Divide(IncidentHisto)
     return XS
 
-inFileName = "/Volumes/Seagate/Elena/TPC/Kaons/KaonDataPicky.root"
+inFileName = "/Volumes/Seagate/Elena/TPC/Kaons/NewEnergy_reco_histo.root"
 
 f = root.TFile(inFileName)
 myTree = f.Get("RecoXS/effTree")

@@ -43,7 +43,7 @@ for i in xrange(eff_Corr_All_Int.GetSize()):
 
 
 for i in xrange(40):
-    if i < 5 or i > 16:
+    if i < 4 or i > 16:
         err_Int  .SetBinContent(i,-100)
         err_Inc  .SetBinContent(i,-100)
         eff_Corr_45_Int.SetBinContent(i,-100)
@@ -82,7 +82,7 @@ legendInc.AddEntry(eff_Corr_45_Inc,"Eff Correction Interacting Stat Unc")
 legendInc.AddEntry(err_Inc,"Eff Correction Interacting Syst Unc")
 legendInc.Draw("same")
                            
-     
+c0.SaveAs("EffCorrK.pdf")     
 
 
 raw_input()

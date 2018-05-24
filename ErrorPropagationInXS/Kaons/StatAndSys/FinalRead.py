@@ -64,6 +64,12 @@ MCFile  = root.TFile("Final.root")
 stat = MCFile.Get("XS_StatOnly")
 sys  = MCFile.Get("grXS")
 
+MCFileTrue =  root.TFile("../EffCorrection/Eff_Correction.root")
+XSTrue45 = MCFileTrue.Get("XS45Deg")
+for i in xrange(16,40):
+    XSTrue45.SetBinContent(i,0)
+    XSTrue45.SetBinError(i,0)
+XSTrue45.SetLineColor(kGreen-2)
 
 sys .SetLineWidth(2)
 stat .SetMarkerStyle(22)
@@ -76,11 +82,12 @@ sys.GetYaxis().SetRangeUser(0,1.5)
 cXS = TCanvas("cXS","cXS",600,600)
 cXS.SetGrid()
 sys.Draw("AP")
-gr . Draw ( "PL" ) ;
+#gr . Draw ( "PL" ) ;
 stat.Draw("e1same")
+XSTrue45.Draw("histosame][")
 lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
 legendXS = TLegend(.40,.68,.86,.86);
-legendXS.AddEntry(gr,"Geant4 Prediction ")
+legendXS.AddEntry(XSTrue45,"Geant4 Prediction Angle > 4.5 Deg")
 legendXS.AddEntry(stat,"Kaon Data Stat Only");
 legendXS.AddEntry(sys ,"Kaon Data Stat and Sys");
 legendXS.Draw("same")

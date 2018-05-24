@@ -13,7 +13,7 @@ def calculateXSPlot(InteractingHisto, IncidentHisto, Name  ):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("fileName"       , nargs='?', default = "/Volumes/Seagate/Elena/TPC/Kaons/KaonDataPicky.root"  , type = str, help="insert fileName")
+parser.add_argument("fileName"       , nargs='?', default = "/Volumes/Seagate/Elena/TPC/Kaons/NewEnergy_reco_histo.root"  , type = str, help="insert fileName")
 parser.add_argument("interactingName", nargs='?', default = "RecoXS/hRecoInteractingKE", type = str, help="interacting plot name")
 parser.add_argument("incidentName"   , nargs='?', default = "RecoXS/hRecoIncidentKE"   , type = str, help="incident plot name")
 args    = parser.parse_args()
