@@ -68,6 +68,33 @@ MCFile100A = root.TFile("Final100A.root")
 stat100A = MCFile100A.Get("XS100A_StatOnly")
 sys100A  = MCFile100A.Get("grXS100A")
 
+true60AF = root.TFile("/Volumes/Seagate/Elena/TPC/AngleCut_0.08334_histo_60A.root")
+XS60_45  = true60AF.Get("AngleCutTrueXS/hCrossSection")
+true100AF = root.TFile("/Volumes/Seagate/Elena/TPC/AngleCut_0.08334_new_histo.root")
+XS100_Int  = true100AF.Get("AngleCutTrueXS083/hInteractingKE")
+XS100_Inc  = true100AF.Get("AngleCutTrueXS083/hIncidentKE")
+XS100_45 = XS100_Int.Clone("XS100_45")
+XS100_45.Scale(101.)
+XS100_45.Divide(XS100_Inc)
+c333 = TCanvas("c33","c22",800,800)
+c333.cd()
+XS60_45.SetLineColor(kGreen -2)
+XS100_45.SetLineColor(kRed -2)
+for i in range(40):
+    if i < 10 or i > 23:
+        XS100_45.SetBinContent(i,0)
+        XS100_45.SetBinError(i,0)
+    if i < 4 or i > 9:
+        XS60_45.SetBinContent(i,0)
+        XS60_45.SetBinError(i,0)
+XS_45 = XS60_45.Clone("XS60_45")
+XS_45.SetLineWidth(2)
+XS_45.Add(XS100_45)
+XS_45.Draw("histo")
+XS60_45.Draw("pesame")
+XS100_45.Draw("pesame")
+
+
 
 sys100A.SetLineColor(kBlue)
 sys100A.SetLineWidth(2)
@@ -83,18 +110,20 @@ sys60A.GetYaxis().SetRangeUser(0,2.5)
 sys100A.GetXaxis().SetRangeUser(0,1200.)
 sys100A.GetYaxis().SetRangeUser(0,2.5)
 
+
 cXS = TCanvas("cXS","cXS",600,600)
 cXS.SetGrid()
 sys60A.Draw("AP")
-gr . Draw ( "PL" ) ;
+#gr . Draw ( "PL" ) ;
+XS_45.Draw("histosame][")
 stat60A.Draw("e1same")
 sys100A.Draw("P")
 stat100A.Draw("e1same")
 lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
-legendXS = TLegend(.40,.68,.86,.86);
-legendXS.AddEntry(gr,"Geant4 Prediction ")
+legendXS = TLegend(.30,.68,.86,.86);
 stat60A.SetLineColor(kRed)
 stat100A.SetLineColor(kBlue)
+legendXS.AddEntry(XS_45,"FTFP_BERT Geant4 Prediction Angle > 5.0 Deg")
 legendXS.AddEntry(stat60A ,"-60A Data (Stat. #oplus Syst Unc.)");
 #legendXS.AddEntry(sys60A  ,"-60A Data Stat and Sys");
 legendXS.AddEntry(stat100A,"-100A Data (Stat. #oplus Syst Unc.)");
@@ -107,12 +136,13 @@ cXS.SaveAs("TheMoneyPlot.pdf")
 cXS100A = TCanvas("cXS100A","cXS100A",600,600)
 cXS100A.SetGrid()
 sys100A.Draw("AP")
-gr . Draw ( "PL" ) ;
+#gr . Draw ( "PL" ) ;
+XS_45.Draw("histosame][")
 stat100A.Draw("e1same")
 lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
-legendXS100A = TLegend(.40,.68,.86,.86);
-legendXS100A.AddEntry(gr,"Geant4 Prediction ")
-legendXS100A.AddEntry(stat100A,"-100A Data (Stat. #oplus Syst Unc.)");
+legendXS100A = TLegend(.30,.68,.86,.86);
+legendXS100A.AddEntry(XS_45,"FTFP_BERT Geant4 Prediction Angle > 5.0 Deg")
+legendXS100A.AddEntry(stat100A ,"-100A Data (Stat. #oplus Syst Unc.)");
 #legendXS100A.AddEntry(sys100A ,"-100A Data Stat and Sys");
 legendXS100A.Draw("same")
 cXS100A.Update()
@@ -122,12 +152,14 @@ cXS100A.SaveAs("TheMoneyPlot100A.pdf")
 cXS60A = TCanvas("cXS60A","cXS60A",600,600)
 cXS60A.SetGrid()
 sys60A.Draw("AP")
-gr . Draw ( "PL" ) ;
+XS_45.Draw("histosame][")
+#gr . Draw ( "PL" ) ;
 stat60A.Draw("e1same")
 lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
-legendXS60A = TLegend(.40,.68,.86,.86);
-legendXS60A.AddEntry(gr,"Geant4 Prediction ")
-legendXS60A.AddEntry(stat60A,"-60A Data (Stat. #oplus Syst Unc.)");
+legendXS60A = TLegend(.30,.68,.86,.86);
+legendXS60A.AddEntry(XS_45,"FTFP_BERT Geant4 Prediction Angle > 5.0 Deg")
+legendXS60A.AddEntry(stat60A ,"-60A Data (Stat. #oplus Syst Unc.)");
+#legendXS60A.AddEntry(stat60A,"-60A Data Stat Only");
 #legendXS60A.AddEntry(sys60A ,"-60A Data Stat and Sys");
 legendXS60A.Draw("same")
 cXS60A.Update()

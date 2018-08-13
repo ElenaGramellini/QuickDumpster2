@@ -1,0 +1,120 @@
+from ROOT import *
+import ROOT as root
+import numpy as np
+from array import array
+
+gStyle.SetOptStat(0)
+
+
+def is_number(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+fnameTxT   = "/Users/elenag/Desktop/LArIATTrueCrossSec/KaonPlusG4.txt"
+
+kineticEnergy = []
+crossSec      = []
+zero          = []
+
+
+title = ""
+with open(fnameTxT) as f:
+    for fLine in f.readlines():
+        w = fLine.split()
+        if is_number(w[0]):
+            runIn    = int(w[0])
+            ke       = float(w[1])
+            xstot       = float(w[4])
+            kineticEnergy.append(ke)
+            crossSec.append(xstot)
+            zero.append(0.)
+        else:
+            if "for" not in fLine: 
+                continue
+            title =  fLine[9:]
+
+g4x      = array('f', kineticEnergy )
+g4y      = array('f', crossSec)
+g4exl    = array('f', zero)
+g4exr    = array('f', zero)
+
+
+nPoints=len(g4x)
+gr      = TGraphErrors ( nPoints , g4x , g4y     , g4exl, g4exr )
+gr.SetTitle(title+"; Kinetic Energy [MeV]; Cross Section [barn]")
+gr . GetXaxis().SetRangeUser(0,1000)
+gr . GetYaxis().SetRangeUser(0,2.)
+gr . SetLineWidth(2) ;
+gr . SetLineColor(kGreen-2) ;
+gr . SetFillColor(0)
+
+#gr . Draw ( "APL" ) ;
+
+
+lariatHead = TLatex();
+lariatHead.SetNDC();
+lariatHead.SetTextFont(62);
+lariatHead.SetTextSize(0.04);
+lariatHead.SetTextAlign(40);
+
+MCFile  = root.TFile("Final.root")
+stat = MCFile.Get("XS_StatOnly")
+sys  = MCFile.Get("grXS")
+
+MCFileTrue =  root.TFile("../EffCorrection/Eff_Correction.root")
+XSTrue45 = MCFileTrue.Get("XS45Deg")
+for i in xrange(16,40):
+    XSTrue45.SetBinContent(i,0)
+    XSTrue45.SetBinError(i,0)
+XSTrue45.SetLineColor(kGreen-2)
+
+sys .SetLineWidth(2)
+stat .SetMarkerStyle(22)
+stat .SetMarkerSize(1.0)
+sys.SetTitle("; Kinetic Energy [MeV]; #sigma^{K}_{TOT} per 50 MeV [barn]")
+sys.GetXaxis().SetRangeUser(0,1200.)
+sys.GetYaxis().SetRangeUser(0,1.5)
+#sys.SetLineColor(kBlack)
+The Liquid Argon Time Projection Chamber (LArTPC) represents one of the
+most advanced experimental technologies for physics at the Intensity
+Frontier due to its full 3D-imaging, excellent particle identification
+and precise calorimetric energy reconstruction. By deploying a LArTPC in
+a dedicated calibration test beam line at Fermilab, LArIAT (Liquid
+Argon In A Testbeam) aims to experimentally calibrate this technology
+in a controlled environment and to provide physics results key to the
+neutrino oscillation physics and proton decay searches of the Short
+Baseline Neutrino (SBND, MicroBooNE, ICARUS) and Long Baseline Neutrino programs (DUNE).
+
+LArIAT's physics program entails a vast set of topics with a
+particular focus on the study of nuclear effects such as pion and
+kaon characteristic interaction modes. 
+
+This thesis presents two world's first measurements: the measurement of ($\pi^-$-Ar) total hadronic cross section in the 100-1050 MeV kinetic energy range and the measurement of the ($K^+$-Ar) total hadronic cross section in the 100-650 MeV kinetic energy range. The analyses devised for these measurements use both the core elements of LArIAT: beamline and TPC. The first step in each analysis is the development of an event selection based on  beamline and TPC information geared towards the identification of the hadron of interest. We then proceed to match the beamline candidate to a suitable TPC track. Finally,  we apply the ``thin slice method" technique and measure the cross section, correcting for background and detector effects. The thin slice technique is a new method to measure hadron-argon cross sections possible only due to the combination of the tracking and calorimetry capability of the LArTPC technology. 
+Albeit never on argon, the hadronic cross section of pions has been measured before on several different elements in thin target experiments, leading to solid predictions for measurements on argon. Through the use of a different technique, our measurement of the  ($\pi^-$-Ar) total hadronic cross section is in general agreement with the prediction by the Geant4 Bertini Cascade model which are based on data from thin target experiments. On the contrary, cross section measurements for kaons are extremely rare, thus more difficult to model. Our measurement of the  ($K^+$-Ar) total hadronic cross section is mostly in disagreement with the Geant4 prediction and provides new experimental data to properly tune the Geant4 models.
+
+This thesis also reports two  ancillary  detector physics measurements necessary for the cross section analyses: the measurements of the LArIAT electric field and calorimetry constants. We developed a technique to measure the LArIAT electric field using cathode-anode piercing tracks with cosmic data. We applied a new technique for the measurement of the calorimetry calibration constants based on the particles' momentum measurement.
+
+
+The ($\pi^-$-Ar) and the ($K^+$-Ar) total hadronic cross measurements are the first physics results of the LArIAT experiment and will be the basis for the future LArIAT measurements of pion and kaon cross sections i
+cXS = TCanvas("cXS","cXS",600,600)
+cXS.SetGrid()
+sys.Draw("AP")
+#gr . Draw ( "PL" ) ;
+stat.Draw("e1same")
+XSTrue45.Draw("histosame][")
+lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
+legendXS = TLegend(.40,.68,.86,.86);
+legendXS.AddEntry(XSTrue45,"Geant4 Prediction Angle > 4.5 Deg")
+legendXS.AddEntry(stat,"Kaon Data Stat Only ");
+legendXS.AddEntry(sys ,"Kaon Data Stat and Sys");
+legendXS.Draw("same")
+cXS.Update()
+cXS.SaveAs("TheMoneyPlotK.pdf")
+
+
+
+raw_input()
+

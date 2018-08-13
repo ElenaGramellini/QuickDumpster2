@@ -77,7 +77,8 @@ stat .SetMarkerSize(1.0)
 sys.SetTitle("; Kinetic Energy [MeV]; #sigma^{K}_{TOT} per 50 MeV [barn]")
 sys.GetXaxis().SetRangeUser(0,1200.)
 sys.GetYaxis().SetRangeUser(0,1.5)
-
+#sys.SetLineColor(kBlack)
+sys.SetLineColor(kBlack)
 
 cXS = TCanvas("cXS","cXS",600,600)
 cXS.SetGrid()
@@ -88,8 +89,8 @@ XSTrue45.Draw("histosame][")
 lariatHead.DrawLatex(0.6,0.90,"LArIAT Preliminary");
 legendXS = TLegend(.40,.68,.86,.86);
 legendXS.AddEntry(XSTrue45,"Geant4 Prediction Angle > 4.5 Deg")
-legendXS.AddEntry(stat,"Kaon Data Stat Only");
-legendXS.AddEntry(sys ,"Kaon Data Stat and Sys");
+legendXS.AddEntry(stat,"Kaon Data (Stat. #oplus Syst Unc.)");
+#legendXS.AddEntry(sys ,"Kaon Data Stat and Sys");
 legendXS.Draw("same")
 cXS.Update()
 cXS.SaveAs("TheMoneyPlotK.pdf")

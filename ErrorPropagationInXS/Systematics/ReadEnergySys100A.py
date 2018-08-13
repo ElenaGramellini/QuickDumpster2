@@ -81,10 +81,8 @@ hInteractingKE_ErrMin  = XSMin.Clone("hInteractingKE_ErrMin")
 hIncidentKE_ErrMin     = XSMin.Clone("hIncidentKE_ErrMin")
 
 
-
 for i in xrange(hInteractingKE.GetSize()):
 
-    
     binInteracting = hInteractingKE.GetBinContent(i)
     binIncident    = hIncidentKE   .GetBinContent(i)
     binXS          = XS            .GetBinContent(i)
@@ -105,9 +103,6 @@ for i in xrange(hInteractingKE.GetSize()):
     err_hInteractingKE_Err = float(max(inte) - min(inte))/2.
     val_hIncidentKE_Err    = float(max(inc) + min(inc))/2.
     err_hIncidentKE_Err    = float(max(inc) - min(inc))/2.
-
-
-    
 
     XS_Err            .SetBinContent(i,val_XS_Err            ) 
     hInteractingKE_Err.SetBinContent(i,val_hInteractingKE_Err) 
